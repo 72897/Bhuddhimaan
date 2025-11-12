@@ -260,7 +260,7 @@ MIT License - see LICENSE file for details
 - **Frontend Documentation**: [client/README.md](client/README.md)
 - **Backend Documentation**: [server/README.md](server/README.md)
 
-- **Issues**: [GitHub Issues](https://github.com/gsairaja1/Buddhimaan/issues)
+
 
 ---
 
