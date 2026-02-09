@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://bhuddhimaan.onrender.com/',
+        target: 'https://bhuddhimaan.onrender.com',
         changeOrigin: true,
         secure: false
       }
