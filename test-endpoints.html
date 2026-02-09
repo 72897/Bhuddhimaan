@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buddhimaan Endpoint Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        .result {
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { border-left: 4px solid #4CAF50; }
+        .error { border-left: 4px solid #f44336; }
+        .info { border-left: 4px solid #2196F3; }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #45a049; }
+        button:disabled { background: #cccccc; cursor: not-allowed; }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        input[type="text"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: none;
+            margin: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Buddhimaan Endpoint Tester</h1>
+    
+    <div class="test-section">
+        <h2>📁 Test 1: Remove Image Object</h2>
+        <input type="file" id="objectImage" accept="image/*">
+        <input type="text" id="objectToRemove" placeholder="Object to remove (e.g., car, tree)">
+        <button onclick="testRemoveObject()">Test Remove Object</button>
+        <div id="objectResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🖼️ Test 2: Remove Background</h2>
+        <input type="file" id="backgroundImage" accept="image/*">
+        <button onclick="testRemoveBackground()">Test Remove Background</button>
+        <div id="backgroundResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Test 3: Server Status</h2>
+        <button onclick="testServerStatus()">Check Server Status</button>
+        <div id="serverResult" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api/ai';
+
+        function logResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            element.className = `result ${type}`;
+            element.textContent = `[${timestamp}] ${message}`;
+        }
+
+        async function testRemoveObject() {
+            const fileInput = document.getElementById('objectImage');
+            const objectInput = document.getElementById('objectToRemove');
+            const file = fileInput.files[0];
+            const object = objectInput.value.trim();
+
+            if (!file) {
+                logResult('objectResult', '❌ Please select an image file', 'error');
+                return;
+            }
+
+            if (!object) {
+                logResult('objectResult', '❌ Please enter an object to remove', 'error');
+                return;
+            }
+
+            logResult('objectResult', '🔄 Testing remove-image-object endpoint...', 'info');
+
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('object', object);
+
+                const response = await fetch(`${API_BASE}/remove-image-object`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    logResult('objectResult', 
+                        `✅ SUCCESS!\n` +
+                        `Status: ${response.status}\n` +
+                        `Message: ${data.message || 'No message'}\n` +
+                        `Content Type: ${data.content ? data.content.substring(0, 50) + '...' : 'No content'}\n` +
+                        `Response: ${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else {
+                    logResult('objectResult', 
+                        `❌ ERROR!\n` +
+                        `Status: ${response.status}\n` +
+                        `Error: ${data.error || 'Unknown error'}\n` +
+                        `Response: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                logResult('objectResult', 
+                    `❌ NETWORK ERROR!\n` +
+                    `Error: ${error.message}\n` +
+                    `Make sure the server is running on port 3000`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testRemoveBackground() {
+            const fileInput = document.getElementById('backgroundImage');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                logResult('backgroundResult', '❌ Please select an image file', 'error');
+                return;
+            }
+
+            logResult('backgroundResult', '🔄 Testing remove-image-background endpoint...', 'info');
+
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch(`${API_BASE}/remove-image-background`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    logResult('backgroundResult', 
+                        `✅ SUCCESS!\n` +
+                        `Status: ${response.status}\n` +
+                        `Message: ${data.message || 'No message'}\n` +
+                        `Content Type: ${data.content ? data.content.substring(0, 50) + '...' : 'No content'}\n` +
+                        `Response: ${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else {
+                    logResult('backgroundResult', 
+                        `❌ ERROR!\n` +
+                        `Status: ${response.status}\n` +
+                        `Error: ${data.error || 'Unknown error'}\n` +
+                        `Response: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                logResult('backgroundResult', 
+                    `❌ NETWORK ERROR!\n` +
+                    `Error: ${error.message}\n` +
+                    `Make sure the server is running on port 3000`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testServerStatus() {
+            logResult('serverResult', '🔄 Checking server status...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/test-upload`, {
+                    method: 'POST',
+                    body: new FormData()
+                });
+
+                if (response.ok) {
+                    logResult('serverResult', 
+                        `✅ SERVER IS RUNNING!\n` +
+                        `Status: ${response.status}\n` +
+                        `Endpoint: /api/ai/test-upload is accessible`, 
+                        'success'
+                    );
+                } else {
+                    logResult('serverResult', 
+                        `⚠️ SERVER RESPONDED WITH ERROR\n` +
+                        `Status: ${response.status}\n` +
+                        `Server is running but endpoint has issues`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                logResult('serverResult', 
+                    `❌ SERVER NOT REACHABLE!\n` +
+                    `Error: ${error.message}\n` +
+                    `Make sure to:\n` +
+                    `1. Start the backend: cd client/server && npm run server\n` +
+                    `2. Check if port 3000 is available`, 
+                    'error'
+                );
+            }
+        }
+
+        // Auto-check server status on page load
+        window.onload = function() {
+            setTimeout(testServerStatus, 1000);
+        };
+    </script>
+</body>
+</html>
