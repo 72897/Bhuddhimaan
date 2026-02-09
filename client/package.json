@@ -3,15 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  
   "scripts": {
-    "start": "node node_modules/vite/bin/vite.js",
-    "dev": "node node_modules/vite/bin/vite.js",
-    "build": "node node_modules/vite/bin/vite.js build",
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
     "lint": "eslint .",
-    "preview": "node node_modules/vite/bin/vite.js preview"
-  }
-,
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@clerk/clerk-react": "^5.40.0",
     "@fontsource/mona-sans": "^5.2.8",
