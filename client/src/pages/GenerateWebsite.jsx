@@ -1,119 +1,104 @@
-import React, { useState, useRef, useMemo } from "react";
-import { Sparkles, Code, Play } from "lucide-react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { Sparkles, Code, Play, Download } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useAuth } from "@clerk/clerk-react";
 
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL || "";
 
 const GenerateWebsite = () => {
   const [prompt, setPrompt] = useState("");
-  const [loading, setLoading] = useState(false);
   const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
   const [showCode, setShowCode] = useState(false);
-  const [panelWidth, setPanelWidth] = useState(50); // % width for preview
+  const [panelWidth, setPanelWidth] = useState(50);
+
   const isDragging = useRef(false);
+  const { getToken } = useAuth();
 
-  // --- Extract JSX, CSS, Links, Scripts from AI response ---
-  const extractFromReactCode = (code) => {
-    try {
-      const match = code.match(/return\s*\(([\s\S]*?)\);?/);
-      if (!match) return { jsx: "", css: "", links: "", scripts: "" };
-
-      let jsx = match[1].trim();
-
-      if (jsx.startsWith("(") && jsx.endsWith(")")) {
-        jsx = jsx.slice(1, -1).trim();
-      }
-
-      jsx = jsx.replace(/className=/g, "class=");
-
-      let css = "";
-      const styleMatch = jsx.match(/<style[^>]*>[\s\S]*?<\/style>/);
-      if (styleMatch) {
-        css = styleMatch[0];
-        jsx = jsx.replace(styleMatch[0], "");
-      }
-
-      let links = "";
-      const linkMatches = jsx.match(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi);
-      if (linkMatches) {
-        links = linkMatches.join("\n");
-        linkMatches.forEach((link) => (jsx = jsx.replace(link, "")));
-      }
-
-      let scripts = "";
-      const scriptMatches = jsx.match(/<script[\s\S]*?<\/script>/gi);
-      if (scriptMatches) {
-        scripts = scriptMatches.join("\n");
-        scriptMatches.forEach((s) => (jsx = jsx.replace(s, "")));
-      }
-
-      return { jsx, css, links, scripts };
-    } catch (error) {
-      console.error("Failed to extract JSX/CSS/JS:", error);
-      return { jsx: "", css: "", links: "", scripts: "" };
-    }
-  };
-
-  // --- Iframe Live Preview ---
+  // ✅ Stable iframe content
   const iframeSrcDoc = useMemo(() => {
-    if (!code) return "";
+  if (!code) return "";
 
-    const { jsx, css, links, scripts } = extractFromReactCode(code);
+  if (code.includes("<html")) return code;
 
-    return `
-      <html>
-        <head>
-          <meta charset="UTF-8" />
-          <title>Live Preview</title>
-          <script src="https://cdn.tailwindcss.com"></script>
-          ${links}
-          ${css}
-        </head>
-        <body class="p-6">
-          ${jsx}
-          ${scripts}
-        </body>
-      </html>
-    `;
-  }, [code]);
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <script src="https://cdn.tailwindcss.com"></script>
+      </head>
+      <body>
+        ${code}
+      </body>
+    </html>
+  `;
+}, [code]);
 
-  // --- Drag Bar Handlers ---
-  const startDrag = () => (isDragging.current = true);
-  const stopDrag = () => (isDragging.current = false);
-  const onDrag = (e) => {
-    if (!isDragging.current) return;
-    const newWidth = (e.clientX / window.innerWidth) * 100;
-    if (newWidth > 20 && newWidth < 80) {
-      setPanelWidth(newWidth);
-    }
+  // ✅ Better drag handling (global listeners)
+  useEffect(() => {
+    const handleMove = (e) => {
+      if (!isDragging.current) return;
+
+      const width = (e.clientX / window.innerWidth) * 100;
+      if (width > 20 && width < 80) {
+        setPanelWidth(width);
+      }
+    };
+
+    const handleUp = () => {
+      isDragging.current = false;
+    };
+
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+  }, []);
+
+  const startDrag = () => {
+    isDragging.current = true;
   };
 
-  // --- Submit Handler ---
+  // ✅ Submit handler
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+
     if (!prompt.trim()) {
-      toast.error("Please enter a valid prompt.");
-      return;
+      return toast.error("Please enter a prompt.");
     }
 
     try {
       setLoading(true);
-      const { data } = await axios.post("/api/ai/generate-website", { prompt });
-      if (data.success) {
-        setCode(data.code);
-      } else {
-        toast.error(data.error || "Failed to generate website code");
+      const token = await getToken();
+
+      const { data } = await axios.post(
+        "/api/ai/generate-website",
+        { prompt },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!data.success) {
+        throw new Error(data.error || "Generation failed");
       }
+
+      setCode(data.content);
+      toast.success("Website generated!");
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to generate website code.");
+      toast.error(error.message || "Server error");
     } finally {
       setLoading(false);
     }
   };
 
-  // --- Download HTML ---
+  // ✅ Download
   const downloadHTML = () => {
     if (!iframeSrcDoc) return;
 
@@ -122,110 +107,111 @@ const GenerateWebsite = () => {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "generated-website.html";
+    a.download = "website.html";
     a.click();
 
     URL.revokeObjectURL(url);
   };
 
   return (
-    <div className="h-screen  flex flex-col items-center p-6 gap-6  text-slate-700  bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col items-center p-6 gap-6 bg-gray-100 dark:bg-gray-900 text-slate-700">
+      
       {/* Form */}
       <form
         onSubmit={onSubmitHandler}
-        className="w-full max-w-3xl p-6 rounded-lg border border-gray-300 bg-white shadow-md"
+        className="w-full max-w-3xl bg-white p-6 rounded-xl shadow"
       >
         <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="w-6 h-6 text-blue-600" />
-          <h1 className="text-xl font-semibold">Generate Website</h1>
+          <Sparkles className="text-blue-600" />
+          <h1 className="text-xl font-semibold">AI Website Generator</h1>
         </div>
 
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
+          placeholder="Describe your website..."
           rows={4}
-          placeholder="Describe the website you want (e.g., A landing page with a hero, features, and contact form)"
-          className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm resize-none"
-          required
+          className="w-full border p-3 rounded-md focus:ring-2 focus:ring-blue-400"
         />
 
         <button
-          type="submit"
           disabled={loading}
-          className="mt-4 w-full bg-gradient-to-r from-blue-600 to-blue-400 text-white py-2 rounded-lg flex justify-center items-center gap-2 disabled:opacity-50"
+          className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg flex justify-center items-center gap-2"
         >
           {loading ? (
-            <span className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></span>
+            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
             <>
-              <Play className="w-5 h-5" />
-              <span>Generate Website</span>
+              <Play size={18} />
+              Generate Website
             </>
           )}
         </button>
       </form>
 
-      {/* Preview + Code Panel */}
+      {/* Preview */}
       {code && (
-        <div
-          className="w-full h-screen flex flex-col"
-          onMouseMove={onDrag}
-          onMouseUp={stopDrag}
-        >
-          {/* Top Bar */}
-          <div className="flex justify-between items-center bg-blue-50 p-2 border-b border-gray-300">
-            <h2 className="font-semibold text-blue-600 flex items-center gap-2">
-              <Play className="w-5 h-5" /> Live Preview
+        <div className="w-full max-w-6xl flex flex-col">
+          
+          {/* Header */}
+          <div className="flex justify-between bg-white p-3 border rounded-t-lg">
+            <h2 className="flex items-center gap-2 font-semibold">
+              <Play size={18} /> Live Preview
             </h2>
+
             <div className="flex gap-2">
               <button
                 onClick={downloadHTML}
-                className="text-sm px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="bg-green-600 text-white px-3 py-1 rounded-md flex items-center gap-1"
               >
-                Download HTML
+                <Download size={16} />
+                Download
               </button>
+
               <button
-                onClick={() => setShowCode(!showCode)}
-                className="text-sm px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                onClick={() => setShowCode((prev) => !prev)}
+                className="bg-gray-700 text-white px-3 py-1 rounded-md"
               >
                 {showCode ? "Hide Code" : "Show Code"}
               </button>
             </div>
           </div>
 
-          {/* Panels */}
-          <div className="flex-1 flex overflow-hidden">
-            {/* Preview Panel */}
+          <div className="flex h-[600px] border border-t-0 rounded-b-lg overflow-hidden">
+            
+            {/* Preview */}
             <div
-              className="h-full border-r border-gray-300"
               style={{ width: showCode ? `${panelWidth}%` : "100%" }}
+              className="border-r"
             >
               <iframe
-                title="Live Preview"
-                className="w-full h-full border-none"
-                sandbox="allow-same-origin allow-scripts"
+                title="preview"
                 srcDoc={iframeSrcDoc}
+                sandbox="allow-scripts allow-same-origin"
+                
+                className="w-full h-full bg-white"
               />
             </div>
 
-            {/* Drag Bar */}
+            {/* Drag bar */}
             {showCode && (
               <div
-                className="w-1 bg-gray-400 cursor-col-resize hover:bg-gray-600"
+                className="w-1 bg-gray-400 cursor-col-resize hover:bg-blue-500"
                 onMouseDown={startDrag}
               />
             )}
 
-            {/* Code Panel */}
+            {/* Code */}
             {showCode && (
               <div
-                className="h-full p-4 bg-white border-l border-gray-300 overflow-auto"
                 style={{ width: `${100 - panelWidth}%` }}
+                className="p-4 bg-gray-50 overflow-auto"
               >
-                <h2 className="font-semibold mb-2 flex items-center gap-2">
-                  <Code className="w-5 h-5 text-blue-600" /> Generated React Code
-                </h2>
-                <pre className="whitespace-pre-wrap text-xs text-gray-800">
+                <h3 className="flex items-center gap-2 font-semibold mb-2">
+                  <Code size={18} /> Generated Code
+                </h3>
+
+                <pre className="text-xs whitespace-pre-wrap">
                   {code}
                 </pre>
               </div>

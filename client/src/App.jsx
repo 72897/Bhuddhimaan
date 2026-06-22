@@ -12,6 +12,7 @@ import ReviewResume from './pages/ReviewResume'
 import Community from './pages/Community'
 import { Toaster } from 'react-hot-toast'
 import { useAuth } from '@clerk/clerk-react'
+import GenerateExcelChart from './pages/GenerateExcelChart'
 
 // ✅ Import Mona Sans from @fontsource
 import '@fontsource/mona-sans/400.css'
@@ -20,7 +21,7 @@ import GenerateWebsite from './pages/GenerateWebsite'
 
 const App = () => {
   return (
-    <div className='dark font-[Mona_Sans] antialiased bg-gray-100 dark:bg-gray-900'>
+    <div className='dark font-[Mona_Sans] antialiased bg-gray-100 dark:bg-gray-900 '>
       <Toaster />
       <Routes>
         <Route path='/' element={<Home />} />
@@ -34,6 +35,7 @@ const App = () => {
           <Route path='review-resume' element={<ReviewResume />} />
           <Route path='community' element={<Community />} />
           <Route path='generate-website' element={<GenerateWebsite />} />
+          <Route path='generate-excel-chart' element={<GenerateExcelChart />} />
         </Route>
       </Routes>
     </div>

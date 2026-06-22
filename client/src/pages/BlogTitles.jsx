@@ -121,10 +121,10 @@ const BlogTitles = () => {
       </form>
 
       {/* Right Column */}
-      <div className="w-full max-w-lg p-6 bg-white rounded-xl border flex flex-col border-gray-200 min-h-96 max-h-[600px] overflow-y-auto">
+      <div className="w-full max-w-lg p-6 bg-slate-900 rounded-xl border border-slate-700 flex flex-col min-h-96 max-h-[600px] overflow-y-auto text-slate-100 scroll-hidden">
         <div className="flex items-center gap-2 mb-4">
           <Hash className="w-5 h-5 text-purple-500" />
-          <h1 className="text-xl font-semibold text-gray-800">Generated Titles</h1>
+          <h1 className="text-xl font-semibold text-white">Generated Titles</h1>
         </div>
 
         {/* Display Output */}

@@ -20,10 +20,15 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
-    "form-data": "^4.0.4",
+    "form-data": "^4.0.5",
     "multer": "^2.0.2",
-    "openai": "^5.12.2",
-    "pdf-parse": "^1.1.1"
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^8.0.1",
+    "openai": "^6.22.0",
+    "pdf-parse": "^1.1.1",
+    "recharts": "^3.7.0",
+    "resend": "^6.9.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

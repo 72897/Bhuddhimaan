@@ -9,7 +9,9 @@ import {
   HiPhotograph,
   HiScissors,
   HiDocumentText,
-  HiUserGroup
+  HiUserGroup,
+  HiChartPie,
+  HiCode
 } from 'react-icons/hi';
 import { CiEraser, CiLogout } from 'react-icons/ci';
 import profileImg from '../assets/profile_img_1.png';
@@ -22,7 +24,8 @@ const navItems = [
   { to: '/ai/remove-background', label: 'Remove Background', Icon: CiEraser },
   { to: '/ai/remove-object', label: 'Remove Object', Icon: HiScissors },
   { to: '/ai/review-resume', label: 'Review Resume', Icon: HiDocumentText },
-  { to: '/ai/generate-website', label: 'Website Generator', Icon: HiUserGroup },
+  { to: '/ai/generate-excel-chart', label: 'Excel Chart Generator', Icon: HiChartPie },
+  { to: '/ai/generate-website', label: 'Website Generator', Icon: HiCode },
   { to: '/ai/community', label: 'Community', Icon: HiUserGroup },
 
 ]
@@ -35,7 +38,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
   const isVisible = true;
 
   return (
-    <div className=' dark h-screen  bg-gray-100 dark:bg-gray-900'>
+    <div className=' dark h-full  bg-gray-100 dark:bg-gray-900'>
       <div
         className={`w-60 bg-gray-100  dark:bg-gray-900 border-r border-gray flex flex-col justify-between items-center max-sm:absolute top-14 bottom-0 ${isVisible ? 'translate-x-0' : '-translate-x-full'
           } transition-transform duration-300 ease-in-out bg-gray-100 dark:bg-gray-900`}
@@ -92,7 +95,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
         </div>
 
         {/* Sign Out */}
-        <div className='w-full  border-gray-200  p-4 px-7 flex items-center justify-between '>
+        <div className='w-full  border-gray-200  p-4 px-7 flex items-center justify-between mt-[-2rem] '>
           <div
             onClick={openUserProfile} // ✅ fixed
             className='flex gap-2 items-center cursor-pointer'

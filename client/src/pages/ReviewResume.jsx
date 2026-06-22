@@ -119,22 +119,22 @@ export default function ResumeReview() {
       </form>
 
       {/* Right Column (Results) */}
-      <div className="w-full max-w-lg p-6 bg-white rounded-xl border flex flex-col border-gray-200 min-h-96 max-h-[600px] overflow-y-auto">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-green-500 text-2xl animate-pulse">📊</span>
-          <h1 className="text-xl font-semibold text-gray-800">Analysis Results</h1>
-        </div>
+      <div className="w-full max-w-lg p-6 bg-slate-900 rounded-xl border border-gray-200 flex flex-col min-h-96 max-h-[600px] overflow-y-auto text-slate-100 scroll-hidden">
+  <div className="flex items-center gap-2 mb-4">
+    <span className="text-green-500 text-2xl animate-pulse">📊</span>
+    <h1 className="text-xl font-semibold text-white">Analysis Results</h1>
+  </div>
 
-        {content ? (
-          <div className="w-full h-full overflow-y-scroll text-sm text-slate-900">
-            <Markdown>{content}</Markdown>
-          </div>
-        ) : (
-          <div className="bg-gray-100 p-6 rounded-xl text-sm text-gray-700 whitespace-pre-wrap min-h-[200px] leading-relaxed shadow-inner flex items-center justify-center text-center">
-            {result || "💡 Upload your resume and click 'Review Resume' to get AI-powered suggestions."}
-          </div>
-        )}
-      </div>
+  {content ? (
+    <div className="w-full h-full text-sm text-slate-200">
+      <Markdown>{content}</Markdown>
+    </div>
+  ) : (
+    <div className="bg-gray-100 p-6 rounded-xl text-sm text-gray-700 whitespace-pre-wrap min-h-[200px] leading-relaxed shadow-inner flex items-center justify-center text-center">
+      {result || "💡 Upload your resume and click 'Review Resume' to get AI-powered suggestions."}
+    </div>
+  )}
+</div>
     </div>
   );
 }

@@ -4,21 +4,26 @@ import { assets } from '../assets/assets'
 import { HiMenu, HiX } from 'react-icons/hi'
 import Sidebar from '../components/Sidebar'
 import { SignIn, useUser } from '@clerk/clerk-react'
+import logo from '../assets/logo1.png'
+
+
+
 
 const Layout = () => {
   const navigate = useNavigate()
   const [sidebar, setSidebar] = useState(false)
   const { user } = useUser();
 
+
   return user ? (
     <div className='flex flex-col items-start justify-start h-screen bg-gray-100 dark:bg-gray-900'>
       {/* Navbar */}
       <nav className='w-full px-8 min-h-14 flex items-center justify-between border-b border-gray-200'>
         <img
-          src={assets.logo}
+          src={logo}
           alt="Logo"
           onClick={() => { navigate('/') }}
-          className="cursor-pointer"
+          className=" w-12 h-20 sm:w-44 cursor-pointer"
         />
         {sidebar ? (
           <HiX
@@ -34,9 +39,9 @@ const Layout = () => {
       </nav>
 
       {/* Main Content */}
-      <div className='flex-1 w-full flex h-[calc(100vh-64px)] overflow-hidden scrollbar-hide'>
+      <div className='flex-1 w-full flex   scroll-hidden'>
        
-        <div className='flex-1 bg-gray-100 dark:bg-gray-900 scrollbar-hide'>
+        <div className='flex-1 bg-gray-100 dark:bg-gray-900  overflow-auto scroll-hidden h-screen'>
           <Outlet />
           
         </div>

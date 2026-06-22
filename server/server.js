@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { clerkMiddleware, requireAuth } from '@clerk/express';
+import subscriptionRoutes from "./routes/subscription.routes.js";
 
 // Load environment variables
 dotenv.config();
@@ -33,7 +34,6 @@ const hasValidClerkKeys =
 
 if (hasValidClerkKeys) {
   app.use(clerkMiddleware());
-  app.use(requireAuth());
 } else {
   // Dev fallback: inject minimal auth shape so downstream code can read req.auth
   app.use((req, _res, next) => {
@@ -44,12 +44,19 @@ if (hasValidClerkKeys) {
 
 app.use('/api/ai', aiRouter);
 app.use('/api/user', userRouter);
+app.use("/api", subscriptionRoutes);
 
 app.get('/', (req, res) => {
   res.send('Server is Live!');
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Conditionally listen only when not running in serverless environment
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+export default app;
+

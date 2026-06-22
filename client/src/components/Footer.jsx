@@ -4,8 +4,50 @@ import { Button } from './ui/button'
 import gradientBackground from '../assets/pattern.png';
 import Card from './share';
 import logo from '../assets/logo1.png'
+import axios from "axios";
+import toast from "react-hot-toast";
+
+
+
 
 const Footer = () => {
+
+
+//// subscription state
+//////
+////
+//// Subscription state
+const [email, setEmail] = React.useState("");
+const [loading, setLoading] = React.useState(false);
+
+const handleSubscribe = async () => {
+  if (!email) {
+    toast.error("Enter a valid email");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const { data } = await axios.post("/api/subscribe", { email });
+
+    if (data.success) {
+      toast.success("Subscribed successfully!");
+      setEmail("");
+    } else {
+      toast.error("Subscription failed");
+    }
+  } catch (error) {
+    toast.error("Error subscribing");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
+
+
   return (
   <div
     style={{ backgroundImage: `url(${gradientBackground})` }}
@@ -62,16 +104,23 @@ const Footer = () => {
             <p className="text-sm mb-4 text-white">
               Get the latest news, articles, and resources, sent weekly to your inbox.
             </p>
-            <div className="flex flex-col sm:flex-row items-center gap-3">
-              <input 
-                className="border border-gray-300 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 outline-none w-full sm:max-w-xs h-10 rounded-md px-3 text-sm transition-all duration-200" 
-                type="email" 
-                placeholder="Enter your email" 
-              />
-              <Button className="btn-primary w-full sm:w-auto h-10 px-6 transition-all duration-200">
-                Subscribe
-              </Button>
-            </div>
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <input 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none w-full sm:max-w-xs h-10 rounded-md px-3 text-sm"
+                  type="email" 
+                  placeholder="Enter your email" 
+                />
+
+                <button
+                  onClick={handleSubscribe}
+                  className="btn-primary w-full sm:w-auto h-10 px-6 transition-all duration-200"
+                  disabled={loading}
+                >
+                  {loading ? "Subscribing..." : "Subscribe"}
+                </button>
+              </div>
           </div>
         </div>
       </div>

@@ -90,12 +90,12 @@ const Testimonial = () => {
 
       {/* Scrolling container */}
       <div className="relative mt-12 group">
-        <div className="flex gap-6 animate-scroll group-hover:pause-animation">
+        <div className="flex gap-6 animate-scroll group-hover:pause-animation ">
           {/* Duplicate testimonials for infinite loop */}
           {[...testimonials, ...testimonials].map((t, index) => (
             <div
               key={index}
-              className="p-6 w-[300px] flex-shrink-0 rounded-lg bg-[#FDFDFE] shadow-lg border border-gray-100"
+              className="p-6 w-[300px] flex-shrink-0 rounded-lg bg-[#FDFDFE] shadow-lg border border-gray-100 bg-slate-200"
             >
               {/* Rating */}
               <div className="flex items-center gap-1">

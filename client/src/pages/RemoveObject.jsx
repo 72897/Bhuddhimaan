@@ -35,7 +35,12 @@ const RemoveObject = () => {
       formData.append("image", image)
       formData.append("object", object)
 
-      const { data } = await axios.post("/api/ai/remove-image-object", formData)
+      const token = await getToken()
+      const { data } = await axios.post("/api/ai/remove-image-object", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
 
       if (data.success) {
         setProcessedImage(data.content) // backend returns image URL
@@ -92,10 +97,10 @@ const RemoveObject = () => {
         </div>
 
         {/* Output Section */}
-        <div className="bg-white p-8 rounded-3xl shadow-xl border flex flex-col items-center justify-center">
+        <div className="bg-slate-900 p-8 rounded-3xl shadow-xl border flex flex-col items-center justify-center text-slate-100">
           <div className="flex items-center gap-2 mb-4">
             <Scissors className="w-6 h-6 text-orange-500" />
-            <h2 className="text-lg font-bold text-gray-800">Output Preview</h2>
+            <h2 className="text-lg font-bold text-white">Output Preview</h2>
           </div>
 
           {loading ? (

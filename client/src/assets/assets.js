@@ -70,6 +70,13 @@ export const AiToolsData = [
         Icon: HiDocumentText,
         bg: { from: '#12B7AC', to: '#08B6CE' },
         path: '/ai/generate-website'
+    },
+    {
+        title: 'Excel Chart Generator',
+        description: 'Upload your Excel file and let our AI generate insightful charts and visualizations for your data.',
+        Icon: HiDocumentText,
+        bg: { from: '#12B7AC', to: '#08B6CE' },
+        path: '/ai/generate-excel-chart'
     }
 ]
 

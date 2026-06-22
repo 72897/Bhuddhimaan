@@ -16,7 +16,7 @@ const Hero = () => {
       <div className="text-center mb-6 -mt-28">
 
         <h1 className="text-3xl sm:text-5xl md:text-6xl 2xl:text-7xl
-        font-semibold mx-auto leading-[1.2] text-white">Create or ask anything with<br /> with <span className=' text-primary-200'>Buddhimaan</span></h1>
+        font-semibold mx-auto leading-[1.2] text-white">Create or ask anything<br /> with <span className=' text-primary-200'>Buddhimaan</span></h1>
         <p className='mt-4 max-w-xs sm:max-w-lg 2xl:max-w-xl m-auto
         max-sm:text-xs text-white'>
           Transform your content creation with our suite of premium AI tools.

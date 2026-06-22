@@ -49,7 +49,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="h-full overflow-y-scroll p-6 bg-gray-100 dark:bg-gray-900">
+    <div className="h-full  p-6 bg-gray-100 dark:bg-gray-900 scroll-hidden" >
       {/* Stats Cards */}
       <div className="flex justify-start gap-4 flex-wrap">
         {/* Total Creations card */}

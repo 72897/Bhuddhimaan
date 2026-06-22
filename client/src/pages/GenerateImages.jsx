@@ -140,10 +140,10 @@ const GenerateImages = () => {
       </form>
 
       {/* Right Column */}
-      <div className="w-full max-w-lg p-6 bg-white rounded-xl border flex flex-col border-gray-200 min-h-96 max-h-[600px] overflow-y-auto">
+      <div className="w-full max-w-lg p-6 bg-slate-900 rounded-xl border flex flex-col border-gray-200 min-h-96 max-h-[600px] overflow-y-auto text-slate-100">
         <div className="flex items-center gap-2 mb-4">
           <ImageIcon className="w-5 h-5 text-green-500" />
-          <h1 className="text-xl font-semibold text-gray-800">Generated image</h1>
+          <h1 className="text-xl font-semibold text-white">Generated image</h1>
         </div>
 
         {!generatedImage ? (

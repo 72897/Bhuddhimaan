@@ -9,7 +9,7 @@ const Plan = () => {
    <div 
    style={{ backgroundImage: `url(${gradientBackground})` }}>
 
- <div className='max-w-2xl mx-auto z-20 my-30'>
+ <div className='max-w-2xl mx-auto z-20 my-30 '>
       <div className='text-center'>
         <h2 className='text-primary-200 text-[42px] font-semibold'>
           Choose Your Plan
@@ -20,8 +20,8 @@ const Plan = () => {
       </div>
 
     
-        <div className='mt-14 max-sm:mx-8'>
-        <PricingTable  />
+        <div className='mt-14 max-sm:mx-8 '>
+        <PricingTable className="bg-slate-200" />
       </div>
     
 

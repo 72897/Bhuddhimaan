@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import axios from "axios";
 import { auth } from "../middleware/auth.js";
-import { generateArticle, generateBlogTitle, generateImage, removeImageBackground, removeImageObject, resumeReview,generateWebsite } from "../controllers/aiController.js";
+import { generateArticle, generateBlogTitle, generateImage, removeImageBackground, removeImageObject, resumeReview,generateWebsite, generateExcelChart } from "../controllers/aiController.js";
 import { resumeUpload, default as upload } from "../configs/multer.js";
 
 const aiRouter = express.Router();
@@ -31,23 +31,15 @@ aiRouter.post('/test-upload', upload.single('image'), (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
 aiRouter.post('/generate-article', auth, generateArticle)
 aiRouter.post('/generate-blog-title', auth, generateBlogTitle)
 aiRouter.post('/generate-image', auth, generateImage)
-aiRouter.post('/remove-image-background', upload.single('image'), removeImageBackground)
-aiRouter.post('/remove-image-object', upload.single('image'), removeImageObject)
+aiRouter.post('/remove-image-background', upload.single('image'), auth, removeImageBackground)
+aiRouter.post('/remove-image-object', upload.single('image'), auth, removeImageObject)
 
 aiRouter.post('/resume-review', resumeUpload.single('resume'), auth, resumeReview)
 aiRouter.post('/generate-website',auth, generateWebsite);
-
+aiRouter.post("/generate-excel-chart", upload.single("file"), auth, generateExcelChart);
 
 
 

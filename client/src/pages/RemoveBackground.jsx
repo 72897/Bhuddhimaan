@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Upload, Eraser, Loader2 } from "lucide-react"
 import axios from "axios"
 import toast from "react-hot-toast"
+import { useAuth } from "@clerk/clerk-react"
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
 
@@ -11,6 +12,8 @@ const RemoveBackground = () => {
   const [processedImage, setProcessedImage] = useState(null)
   const [loading, setLoading] = useState(false)
   const [content, setContent] = useState('')
+
+  const { getToken } = useAuth()
 
   // ✅ handle file upload
   const handleFileChange = (e) => {
@@ -27,10 +30,15 @@ const RemoveBackground = () => {
     if (!image) return toast.error("Please upload an image first!")
     setLoading(true)
     try {
+      const token = await getToken()
       const formData = new FormData()
       formData.append("image", image)
 
-      const { data } = await axios.post("/api/ai/remove-image-background", formData)
+      const { data } = await axios.post("/api/ai/remove-image-background", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
 
       if (data.success) {
         setContent(data.content) // backend returns processed image URL
@@ -86,10 +94,10 @@ const RemoveBackground = () => {
         </div>
 
         {/* Preview Section */}
-        <div className="bg-white p-8 rounded-3xl shadow-xl border flex flex-col items-center justify-center">
+        <div className="bg-slate-900 p-8 rounded-3xl shadow-xl border flex flex-col items-center justify-center text-slate-100">
           <div className="flex items-center gap-2 mb-4">
             <Eraser className="w-6 h-6 text-orange-500" />
-            <h2 className="text-lg font-bold text-gray-800">Result Preview</h2>
+            <h2 className="text-lg font-bold text-white">Result Preview</h2>
           </div>
 
           {loading ? (

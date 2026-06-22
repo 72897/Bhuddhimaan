@@ -117,31 +117,31 @@ const WriteArticle = () => {
       </form>
 
       {/* Right Column */}
-      <div className="w-full max-w-lg p-4 bg-white rounded-lg border flex flex-col border-gray-200 min-h-96 max-h-[600px]">
-        <div className="flex items-center gap-2 mb-4">
-          <Edit className="w-4 h-5 text-[#4A7AFF]" />
-          <h1 className="text-xl font-semibold">Generated Article</h1>
-        </div>
+     <div className="w-full max-w-lg p-4 bg-slate-900 rounded-xl border border-slate-700 flex flex-col min-h-96 max-h-[600px] text-slate-100 scroll-hidden">
+  <div className="flex items-center gap-2 mb-4">
+    <Edit className="w-4 h-5 text-blue-400" />
+    <h1 className="text-xl font-semibold">Generated Article</h1>
+  </div>
 
-        {loading ? (
-          <div className="flex-1 flex justify-center items-center">
-            <span className="w-6 h-6 border-2 border-t-transparent border-blue-500 rounded-full animate-spin" />
-          </div>
-        ) : !content ? (
-          <div className="flex-1 flex justify-center items-center">
-            <div className="text-sm flex flex-col items-center gap-5 text-center text-slate-500">
-              <Edit className="w-9 h-9" />
-              <p>Enter a topic and click "Generate Article" to get started.</p>
-            </div>
-          </div>
-        ) : (
-          <div className="mt-3 h-full overflow-y-scroll text-sm text-black">
-            <div className='reset-tw'>
-              <Markdown>{content}</Markdown>
-            </div>
-          </div>
-        )}
+  {loading ? (
+    <div className="flex-1 flex justify-center items-center">
+      <span className="w-6 h-6 border-2 border-t-transparent border-blue-400 rounded-full animate-spin" />
+    </div>
+  ) : !content ? (
+    <div className="flex-1 flex justify-center items-center">
+      <div className="text-sm flex flex-col items-center gap-5 text-center text-slate-400">
+        <Edit className="w-9 h-9 text-slate-500" />
+        <p>Enter a topic and click "Generate Article" to get started.</p>
       </div>
+    </div>
+  ) : (
+    <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-200">
+      <div className="reset-tw">
+        <Markdown>{content}</Markdown>
+      </div>
+    </div>
+  )}
+</div>
     </div>
   )
 }

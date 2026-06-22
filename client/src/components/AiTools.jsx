@@ -104,7 +104,7 @@ const AiTools = () => {
             <div
               key={index}
               onClick={() => user && navigate(tool.path)}
-              className="w-[360px] max-sm:w-full min-h-46 bg-white rounded-xl border border-gray-100 shadow-lg hover:shadow-2xl transition-transform transform hover:scale-110 cursor-pointer p-6 flex flex-col items-start"
+              className="w-[360px] max-sm:w-full min-h-46 bg-slate-200 rounded-xl border border-gray-100 shadow-lg hover:shadow-2xl transition-transform transform hover:scale-110 cursor-pointer p-6 flex flex-col items-start"
             >
               {/* Tool Avatar */}
               <img
