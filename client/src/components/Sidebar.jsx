@@ -43,7 +43,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
   return (
     <div className=' dark h-full  bg-gray-100 dark:bg-gray-900'>
       <div
-        className={`w-60 bg-gray-100  dark:bg-gray-900 border-r border-gray flex flex-col justify-between items-center max-sm:absolute top-14 bottom-0 ${isVisible ? 'translate-x-0' : '-translate-x-full'
+        className={`w-60 bg-gray-100  dark:bg-gray-900 border-r border-gray flex flex-col justify-between items-center max-sm:absolute top-0 bottom-0 ${isVisible ? 'translate-x-0' : '-translate-x-full'
           } transition-transform duration-300 ease-in-out bg-gray-100 dark:bg-gray-900`}
 
       >
