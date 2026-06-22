@@ -57,10 +57,7 @@ const GenerateImages = () => {
   }
 
   return (
-
-   
-
-    <div className="h-screen flex items-center justify-center p-6  flex-wrap gap-6 bg-gray-50 text-slate-700 bg-gray-100 dark:bg-gray-900">
+    <div className="h-full w-full overflow-y-auto flex items-center justify-center p-6 flex-wrap gap-6 text-slate-700 bg-gray-100 dark:bg-gray-900 scroll-hidden">
       {/* Left Column */}
       <form
         onSubmit={onSubmitHandler}

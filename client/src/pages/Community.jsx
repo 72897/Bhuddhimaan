@@ -66,11 +66,11 @@ const Community = () => {
   }, [user]);
 
   return !loading ? (
-    <div className="flex-1 h-full flex-col gap-4 p-6 bg-gray-100 dark:bg-gray-900 overflow-y-hidden scrollbar-hide">
-      <h1 className="text-xl font-bold mb-4 text-white">Creations</h1>
+    <div className="h-full w-full overflow-y-auto flex flex-col justify-start p-6 text-slate-700 bg-gray-100 dark:bg-gray-900 scroll-hidden">
+      <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">Creations Feed</h1>
 
       {/* Grid for cards */}
-      <div className="h-full w-full rounded-xl p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6  bg-gray-100 dark:bg-gray-900 scrollbar-hide overflow-y-hidden">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 bg-transparent pb-8">
         {loading ? (
           <p className="text-center col-span-full text-white">Loading...</p>
         ) : (creations || []).length === 0 ? (
@@ -111,8 +111,8 @@ const Community = () => {
       </div>
     </div>
   ) : (
-    <div className="flex-1 h-full flex items-center justify-center">
-      <span className="w-10 h-10 my-1 rounded-full border-3 border-primary border-t-transparent animate-spin"></span>
+    <div className="h-full w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <span className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></span>
     </div>
   );
 };

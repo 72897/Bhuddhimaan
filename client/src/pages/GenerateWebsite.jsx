@@ -201,36 +201,42 @@ const GenerateWebsite = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-6 gap-6 bg-gray-100 dark:bg-gray-900 text-slate-700">
+    <div className="h-full w-full overflow-y-auto flex flex-col justify-start p-6 text-slate-700 bg-gray-100 dark:bg-gray-900 scroll-hidden">
       
+      {/* Page Header */}
+      <div className="max-w-4xl mx-auto w-full mb-6">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+          <Sparkles className="w-6 h-6 text-blue-500" />
+          AI Landing Page Generator
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-xs">
+          Describe the website you want to generate, and edit specific components interactively.
+        </p>
+      </div>
+
       {/* Form */}
       <form
         onSubmit={onSubmitHandler}
-        className="w-full max-w-4xl bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl"
+        className="w-full max-w-4xl bg-white p-6 rounded-xl border border-gray-250 shadow-sm mx-auto flex flex-col gap-4 text-slate-700"
       >
-        <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="text-indigo-600 w-6 h-6" />
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">AI Landing Page Generator</h1>
-        </div>
-
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Describe your landing page (e.g. 'A sleek dark mode marketing page for a cyber security firm with pricing cards, testimonials, and primary colors as neon purple')..."
           rows={3}
-          className="w-full border dark:border-gray-700 p-3.5 bg-transparent text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none"
+          className="w-full border border-gray-350 p-3 bg-white text-gray-900 rounded-lg focus:border-blue-500 focus:outline-none resize-none text-xs"
         />
 
         <button
           disabled={loading}
-          className="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl flex justify-center items-center gap-2 cursor-pointer shadow transition-colors"
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-450 text-white font-bold py-2.5 rounded-lg flex justify-center items-center gap-1.5 cursor-pointer shadow-xs transition hover:opacity-95 text-xs"
         >
           {loading ? (
-            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <span className="w-4 h-4 my-0.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
             <>
-              <Play size={18} />
-              Generate Landing Page
+              <Play size={14} />
+              <span>Generate Landing Page</span>
             </>
           )}
         </button>
@@ -238,28 +244,30 @@ const GenerateWebsite = () => {
 
       {/* Editor & Preview Sandbox */}
       {code && (
-        <div className="w-full max-w-7xl flex flex-col bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-2xl overflow-hidden">
+        <div className="w-full max-w-7xl mx-auto flex flex-col bg-slate-900 border border-slate-700 rounded-xl shadow overflow-hidden mb-8 mt-6">
           
           {/* Editor Header Control */}
-          <div className="flex flex-wrap items-center justify-between p-4 border-b dark:border-gray-700 gap-3">
-            <h2 className="flex items-center gap-2 font-bold text-gray-800 dark:text-white">
-              <Code size={20} className="text-indigo-600" /> Interactive Sandbox
+          <div className="flex flex-wrap items-center justify-between p-4 border-b border-slate-800 bg-slate-950/40 gap-3 text-slate-100">
+            <h2 className="flex items-center gap-2 font-bold text-white text-sm">
+              <Code size={18} className="text-blue-500" /> Interactive Sandbox
             </h2>
 
             <div className="flex items-center gap-3">
               <button
+                type="button"
                 onClick={() => setShowCode((prev) => !prev)}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white text-sm font-semibold rounded-xl transition-colors cursor-pointer"
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition cursor-pointer"
               >
                 {showCode ? "Hide Code Panel" : "View Code Panel"}
               </button>
 
               <button
+                type="button"
                 onClick={downloadHTML}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1 transition cursor-pointer"
               >
-                <Download size={16} />
-                Download HTML
+                <Download size={14} />
+                <span>Download HTML</span>
               </button>
             </div>
           </div>
@@ -270,11 +278,11 @@ const GenerateWebsite = () => {
             {/* Left/Main Preview Window */}
             <div
               style={{ width: showCode ? `${panelWidth}%` : "100%" }}
-              className="h-full border-r dark:border-gray-700 flex flex-col relative transition-all duration-100"
+              className="h-full border-r border-slate-800 flex flex-col relative transition-all duration-100"
             >
               {/* Sandbox Tip Banner */}
-              <div className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/10 border-b dark:border-gray-700 text-xs text-indigo-700 dark:text-indigo-300 flex items-center gap-2 font-medium">
-                <MousePointerClick size={14} />
+              <div className="px-4 py-2 bg-slate-950/50 border-b border-slate-850 text-[10px] text-slate-400 flex items-center gap-2 font-medium">
+                <MousePointerClick size={12} />
                 <span>Tip: Click on any text, button, or header in the preview to select and modify it.</span>
               </div>
 
@@ -288,22 +296,23 @@ const GenerateWebsite = () => {
 
               {/* Element Modification Overlay Panel */}
               {selectedElement && (
-                <div className="absolute bottom-4 left-4 right-4 bg-gray-900 text-white p-4 rounded-2xl shadow-2xl border border-gray-700 flex flex-col gap-3">
+                <div className="absolute bottom-4 left-4 right-4 bg-slate-950 text-white p-4 rounded-xl shadow-2xl border border-slate-800 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-400">
+                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-400">
                       <Edit2 size={12} />
                       Selected element: &lt;{selectedElement.tagName.toLowerCase()}&gt;
                     </div>
                     <button 
+                      type="button"
                       onClick={() => setSelectedElement(null)}
-                      className="text-gray-400 hover:text-white text-sm font-bold"
+                      className="text-slate-400 hover:text-white text-sm font-bold cursor-pointer"
                     >
                       ✕
                     </button>
                   </div>
 
                   {selectedElement.innerText && (
-                    <div className="text-xs text-gray-300 italic truncate max-w-full">
+                    <div className="text-[11px] text-slate-350 italic truncate max-w-full">
                       "{selectedElement.innerText}"
                     </div>
                   )}
@@ -314,19 +323,19 @@ const GenerateWebsite = () => {
                       placeholder="e.g. 'change background to slate-800' or 'make text larger and bold'..."
                       value={editInstruction}
                       onChange={(e) => setEditInstruction(e.target.value)}
-                      className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="flex-1 px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs focus:outline-none focus:border-blue-500 text-white"
                     />
                     <button
                       type="submit"
                       disabled={modifying}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl flex items-center gap-1 cursor-pointer disabled:opacity-75"
+                      className="px-4 py-2 bg-blue-650 hover:bg-blue-600 text-white text-xs font-bold rounded-lg flex items-center gap-1 cursor-pointer disabled:opacity-75"
                     >
                       {modifying ? (
-                        <Loader2 size={16} className="animate-spin" />
+                        <Loader2 size={14} className="animate-spin" />
                       ) : (
                         <>
-                          <Wand2 size={16} />
-                          Apply
+                          <Wand2 size={14} />
+                          <span>Apply</span>
                         </>
                       )}
                     </button>
@@ -338,7 +347,7 @@ const GenerateWebsite = () => {
             {/* Resize Split-drag Handle */}
             {showCode && (
               <div
-                className="w-1 bg-gray-300 dark:bg-gray-700 cursor-col-resize hover:bg-indigo-500 transition-colors hidden lg:block"
+                className="w-1 bg-slate-850 cursor-col-resize hover:bg-indigo-500 transition-colors hidden lg:block"
                 onMouseDown={startDrag}
               />
             )}
@@ -347,12 +356,12 @@ const GenerateWebsite = () => {
             {showCode && (
               <div
                 style={{ width: `${100 - panelWidth}%` }}
-                className="h-full flex flex-col bg-gray-950 text-white"
+                className="h-full flex flex-col bg-slate-950 text-slate-100"
               >
-                <div className="px-4 py-2.5 bg-gray-900 border-b border-gray-800 flex justify-between items-center text-xs font-semibold tracking-wide text-gray-400">
+                <div className="px-4 py-2.5 bg-slate-900 border-b border-slate-800 flex justify-between items-center text-[10px] font-semibold tracking-wide text-slate-500">
                   <span>LIVE HTML EDITOR</span>
-                  <div className="flex items-center gap-1.5 text-[10px] text-gray-500">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                  <div className="flex items-center gap-1.5 text-[9px] text-slate-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
                     <span>Auto-sync Active</span>
                   </div>
                 </div>
@@ -360,7 +369,7 @@ const GenerateWebsite = () => {
                 <textarea
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                  className="flex-1 w-full p-4 font-mono text-xs bg-gray-950 text-emerald-400 focus:outline-none resize-none overflow-auto leading-relaxed border-0"
+                  className="flex-1 w-full p-4 font-mono text-xs bg-slate-950 text-emerald-400 focus:outline-none resize-none overflow-auto leading-relaxed border-0"
                 />
               </div>
             )}

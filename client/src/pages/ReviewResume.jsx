@@ -132,24 +132,24 @@ export default function ResumeReview() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 flex flex-col items-center gap-8 text-slate-700">
+    <div className="h-full w-full overflow-y-auto flex flex-col justify-start p-6 text-slate-700 bg-gray-100 dark:bg-gray-900 scroll-hidden">
       
       {/* Upload and Configuration Form */}
-      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 print:hidden">
+      <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 print:hidden pb-8">
         
         {/* Left Side: Inputs */}
         <form
           onSubmit={onSubmitHandler}
-          className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl flex flex-col gap-5"
+          className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-5 text-slate-700"
         >
-          <div className="flex items-center gap-2 border-b pb-3 dark:border-gray-700">
-            <FileText className="w-7 h-7 text-indigo-600 animate-pulse" />
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">AI ATS Resume Optimizer</h1>
+          <div className="flex items-center gap-2 border-b pb-3 border-gray-200">
+            <FileText className="w-6 h-6 text-blue-500" />
+            <h1 className="text-lg font-bold text-gray-800">AI ATS Resume Optimizer</h1>
           </div>
 
           {/* Upload File */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Upload Resume (PDF)</label>
+            <p className="text-sm font-medium text-gray-700">Upload Resume (PDF)</p>
             <input
               type="file"
               accept=".pdf"
@@ -159,10 +159,10 @@ export default function ResumeReview() {
             />
             <label
               htmlFor="resume-file-input"
-              className="w-full p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl bg-gray-50 dark:bg-gray-900/30 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/10 transition text-center cursor-pointer block"
+              className="w-full p-6 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:border-blue-500 hover:bg-blue-50/30 transition text-center cursor-pointer block"
             >
               <FileText className="mx-auto w-8 h-8 text-gray-400 mb-2" />
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-xs font-semibold text-gray-600">
                 {file ? `📎 ${file.name}` : "Click to select A4 Resume PDF"}
               </span>
             </label>
@@ -170,68 +170,68 @@ export default function ResumeReview() {
 
           {/* Job Description */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Target Job Description</label>
+            <p className="text-sm font-medium text-gray-700">Target Job Description</p>
             <textarea
               rows={5}
-              placeholder="Paste the job description here to analyze match score and tailor your resume achievements..."
+              placeholder="Paste the job description here to analyze match score..."
               value={jd}
               onChange={(e) => setJd(e.target.value)}
-              className="w-full border dark:border-gray-700 p-3 bg-transparent text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none text-sm"
+              className="w-full border border-gray-300 p-3 bg-white text-gray-900 rounded-xl focus:border-blue-500 focus:outline-none resize-none text-xs"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl flex justify-center items-center gap-2 cursor-pointer shadow transition-colors disabled:opacity-75"
+            className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-450 text-white font-bold rounded-lg flex justify-center items-center gap-2 cursor-pointer shadow-sm hover:opacity-95 transition disabled:opacity-75 text-xs"
           >
             {loading ? (
               <>
-                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Analyzing Match Rate...
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Analyzing Match Rate...</span>
               </>
             ) : (
               <>
-                <Sparkles size={18} />
-                Analyze & Review
+                <Sparkles size={16} />
+                <span>Analyze & Review</span>
               </>
             )}
           </button>
         </form>
 
         {/* Right Side: Score Card & Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl flex flex-col justify-between">
+        <div className="bg-slate-900 border border-slate-700 p-6 rounded-xl shadow flex flex-col justify-between text-slate-100">
           <div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <h2 className="text-base font-bold text-white mb-4 flex items-center gap-2">
               <Award className="text-yellow-500" /> ATS Compatibility Results
             </h2>
 
             {atsScore !== null ? (
-              <div className="flex flex-col items-center gap-4 text-center">
+              <div className="flex flex-col items-center gap-4 text-center mt-6">
                 {/* Circular Score Gauge */}
                 <div className="relative w-32 h-32 flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90">
-                    <circle cx="64" cy="64" r="54" stroke="#e2e8f0" strokeWidth="10" fill="transparent" />
-                    <circle cx="64" cy="64" r="54" stroke="#4f46e5" strokeWidth="10" fill="transparent"
+                    <circle cx="64" cy="64" r="54" stroke="#1e293b" strokeWidth="10" fill="transparent" />
+                    <circle cx="64" cy="64" r="54" stroke="#3b82f6" strokeWidth="10" fill="transparent"
                       strokeDasharray={2 * Math.PI * 54}
                       strokeDashoffset={2 * Math.PI * 54 * (1 - atsScore / 100)}
                       strokeLinecap="round"
                     />
                   </svg>
-                  <span className="absolute text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">{atsScore}%</span>
+                  <span className="absolute text-2xl font-extrabold text-blue-400">{atsScore}%</span>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <span className="text-sm font-bold text-gray-800 dark:text-white">
+                  <span className="text-sm font-bold text-white">
                     {atsScore >= 80 ? "Excellent Match!" : atsScore >= 60 ? "Average Match" : "Weak Match"}
                   </span>
-                  <p className="text-xs text-gray-500 max-w-sm">{analysis?.matchAnalysis}</p>
+                  <p className="text-xs text-slate-400 max-w-sm">{analysis?.matchAnalysis}</p>
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-48 border border-dashed border-gray-200 dark:border-gray-700 rounded-2xl text-gray-400 text-sm text-center p-6">
-                <FileText className="w-12 h-12 mb-2 text-gray-300" />
-                Upload a resume and click Analyze to view match percentage, keyword analysis, and tailoring choices.
+              <div className="flex flex-col items-center justify-center h-48 border border-dashed border-slate-800 rounded-xl text-slate-500 text-xs text-center p-6 mt-6">
+                <FileText className="w-10 h-10 mb-2 text-slate-650" />
+                Upload your resume PDF and click Analyze to view match percentage, missing keywords, and recommendations.
               </div>
             )}
           </div>
@@ -240,17 +240,17 @@ export default function ResumeReview() {
             <button
               onClick={handleTailorResume}
               disabled={tailoring}
-              className="mt-6 w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-2xl flex justify-center items-center gap-2 cursor-pointer shadow-lg transition-transform hover:-translate-y-0.5 disabled:opacity-75"
+              className="mt-6 w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-lg flex justify-center items-center gap-2 cursor-pointer shadow transition disabled:opacity-75 text-xs"
             >
               {tailoring ? (
                 <>
-                  <RefreshCw className="w-5 h-5 animate-spin" />
-                  Tailoring Achievements...
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Tailoring Achievements...</span>
                 </>
               ) : (
                 <>
-                  <RefreshCw size={18} />
-                  Tailor Resume for this Job
+                  <RefreshCw size={16} />
+                  <span>Tailor Resume for this Job</span>
                 </>
               )}
             </button>
@@ -261,38 +261,38 @@ export default function ResumeReview() {
 
       {/* Structured Analysis Results */}
       {analysis && !tailoredResume && (
-        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 print:hidden">
+        <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 print:hidden pb-8">
           {/* Strengths & Weaknesses */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl flex flex-col gap-4">
-            <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <CheckCircle className="text-emerald-500 w-5 h-5" /> Key Strengths
+          <div className="bg-slate-900 border border-slate-700 p-6 rounded-xl shadow flex flex-col gap-4 text-slate-100">
+            <h3 className="font-bold text-white flex items-center gap-2">
+              <CheckCircle className="text-emerald-400 w-4 h-4" /> Key Strengths
             </h3>
-            <ul className="list-disc pl-5 text-sm text-gray-600 dark:text-gray-300 flex flex-col gap-2">
-              {analysis.strengths?.map((s, idx) => <li key={idx}>{s}</li>)}
+            <ul className="list-disc pl-5 text-xs text-slate-300 flex flex-col gap-1.5">
+              {analysis.strengths?.map((s, idx) => <li key={idx} className="text-slate-350">{s}</li>)}
             </ul>
 
-            <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2 mt-4">
-              <AlertCircle className="text-rose-500 w-5 h-5" /> Vulnerability Areas
+            <h3 className="font-bold text-white flex items-center gap-2 mt-4">
+              <AlertCircle className="text-rose-400 w-4 h-4" /> Vulnerability Areas
             </h3>
-            <ul className="list-disc pl-5 text-sm text-gray-600 dark:text-gray-300 flex flex-col gap-2">
-              {analysis.weaknesses?.map((w, idx) => <li key={idx}>{w}</li>)}
+            <ul className="list-disc pl-5 text-xs text-slate-300 flex flex-col gap-1.5">
+              {analysis.weaknesses?.map((w, idx) => <li key={idx} className="text-slate-350">{w}</li>)}
             </ul>
           </div>
 
           {/* Missing Keywords & Recs */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl flex flex-col gap-4">
-            <h3 className="font-bold text-gray-900 dark:text-white">🎯 Missing Keywords</h3>
-            <div className="flex flex-wrap gap-2">
+          <div className="bg-slate-900 border border-slate-700 p-6 rounded-xl shadow flex flex-col gap-4 text-slate-100">
+            <h3 className="font-bold text-white">🎯 Missing Keywords</h3>
+            <div className="flex flex-wrap gap-1.5">
               {analysis.missingKeywords?.map((kw, idx) => (
-                <span key={idx} className="px-2.5 py-1 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 text-xs font-semibold rounded-lg border border-red-100 dark:border-red-900/30">
+                <span key={idx} className="px-2 py-0.5 bg-red-950/20 text-red-400 text-[10px] font-semibold rounded border border-red-900/30">
                   {kw}
                 </span>
               ))}
             </div>
 
-            <h3 className="font-bold text-gray-900 dark:text-white mt-4">💡 Recommendations</h3>
-            <ul className="list-disc pl-5 text-sm text-gray-600 dark:text-gray-300 flex flex-col gap-2">
-              {analysis.recommendations?.map((r, idx) => <li key={idx}>{r}</li>)}
+            <h3 className="font-bold text-white mt-4">💡 Recommendations</h3>
+            <ul className="list-disc pl-5 text-xs text-slate-300 flex flex-col gap-1.5">
+              {analysis.recommendations?.map((r, idx) => <li key={idx} className="text-slate-350">{r}</li>)}
             </ul>
           </div>
         </div>
@@ -300,22 +300,22 @@ export default function ResumeReview() {
 
       {/* Tailored Resume Print view */}
       {tailoredResume && (
-        <div className="w-full max-w-4xl flex flex-col gap-4">
-          <div className="flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-lg print:hidden">
-            <span className="text-sm font-bold text-gray-800 dark:text-white">Tailored Version Ready</span>
+        <div className="w-full max-w-4xl mx-auto flex flex-col gap-4 pb-8">
+          <div className="flex justify-between items-center bg-slate-900 border border-slate-700 p-4 rounded-xl shadow print:hidden text-slate-100">
+            <span className="text-xs font-bold text-white">Tailored Version Ready</span>
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 transition cursor-pointer"
             >
-              <Printer size={16} />
-              Print / Save PDF
+              <Printer size={14} />
+              <span>Print / Save PDF</span>
             </button>
           </div>
 
           {/* Styled Paper sheet */}
           <div 
             id="tailored-resume-print"
-            className="w-full bg-white text-gray-900 p-12 shadow-2xl rounded-3xl min-h-[1056px] border border-gray-200 prose max-w-none text-sm leading-relaxed font-serif"
+            className="w-full bg-white text-gray-900 p-12 shadow-2xl rounded-2xl min-h-[1056px] border border-gray-250 prose max-w-none text-xs leading-relaxed font-serif"
           >
             <Markdown>{tailoredResume}</Markdown>
           </div>

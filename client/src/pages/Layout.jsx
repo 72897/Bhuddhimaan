@@ -16,9 +16,9 @@ const Layout = () => {
 
 
   return user ? (
-    <div className='flex flex-col items-start justify-start h-screen bg-gray-100 dark:bg-gray-900'>
+    <div className='flex flex-col h-screen overflow-hidden bg-gray-100 dark:bg-gray-900'>
       {/* Navbar */}
-      <nav className='w-full px-8 min-h-14 flex items-center justify-between border-b border-gray-200'>
+      <nav className='w-full px-8 h-14 flex items-center justify-between border-b border-gray-200 dark:border-gray-800 flex-shrink-0'>
         <img
           src={logo}
           alt="Logo"
@@ -39,15 +39,12 @@ const Layout = () => {
       </nav>
 
       {/* Main Content */}
-      <div className='flex-1 w-full flex   scroll-hidden'>
-       
-        <div className='flex-1 bg-gray-100 dark:bg-gray-900  overflow-auto scroll-hidden h-screen'>
+      <div className='flex-1 w-full flex overflow-hidden'>
+        <div className='flex-1 bg-gray-100 dark:bg-gray-900 overflow-hidden h-full'>
           <Outlet />
-          
         </div>
-         <Sidebar sidebar={sidebar} setSidebar={setSidebar} />
+        <Sidebar sidebar={sidebar} setSidebar={setSidebar} />
       </div>
-      
     </div>
   ) : (
     <div className='flex items-center justify-center h-screen '>

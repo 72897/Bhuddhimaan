@@ -54,11 +54,11 @@ const RemoveObject = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-8">
+    <div className="h-full w-full overflow-y-auto flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-8 scroll-hidden">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
 
         {/* Upload Section */}
-        <div className="bg-white p-8 rounded-3xl shadow-xl border">
+        <div className="w-full p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <Scissors className="w-7 h-7 text-orange-500 animate-pulse" />
             <h2 className="text-xl font-bold text-gray-800">AI Object Remover</h2>
@@ -97,7 +97,7 @@ const RemoveObject = () => {
         </div>
 
         {/* Output Section */}
-        <div className="bg-slate-900 p-8 rounded-3xl shadow-xl border flex flex-col items-center justify-center text-slate-100">
+        <div className="w-full p-6 bg-slate-900 rounded-xl border border-slate-700 flex flex-col items-center justify-center text-slate-100">
           <div className="flex items-center gap-2 mb-4">
             <Scissors className="w-6 h-6 text-orange-500" />
             <h2 className="text-lg font-bold text-white">Output Preview</h2>

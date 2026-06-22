@@ -197,18 +197,18 @@ const ExcelChartBot = () => {
     const { xAxis, yAxis, title } = currentChartConfig;
 
     return (
-      <div ref={chartRef} className="w-full h-full bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow flex flex-col justify-between">
+      <div ref={chartRef} className="w-full h-full bg-slate-900 p-6 rounded-xl border border-slate-700 shadow flex flex-col justify-between text-slate-100">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h2>
-            <span className="text-xs text-gray-400 font-medium">Top {topN} records • {selectedChartType.toUpperCase()} Chart</span>
+            <h2 className="text-base font-bold text-white">{title}</h2>
+            <span className="text-[10px] text-slate-400 font-medium">Top {topN} records • {selectedChartType.toUpperCase()} Chart</span>
           </div>
           <button
             onClick={downloadChart}
-            className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
           >
-            <Download size={14} />
-            Download
+            <Download size={12} />
+            <span>Download</span>
           </button>
         </div>
 
@@ -216,47 +216,47 @@ const ExcelChartBot = () => {
           <ResponsiveContainer width="100%" height="100%">
             {selectedChartType === "bar" && (
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                <XAxis dataKey={xAxis} tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey={xAxis} tick={{ fontSize: 9, fill: "#94a3b8" }} />
+                <YAxis tick={{ fontSize: 9, fill: "#94a3b8" }} />
+                <Tooltip contentStyle={{ backgroundColor: "#0f172a", border: "1px solid #334155" }} />
                 <Legend />
-                <Bar dataKey={yAxis} fill="#4f46e5" radius={[6, 6, 0, 0]} />
+                <Bar dataKey={yAxis} fill="#3b82f6" radius={[4, 4, 0, 0]} />
               </BarChart>
             )}
 
             {selectedChartType === "line" && (
               <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                <XAxis dataKey={xAxis} tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey={xAxis} tick={{ fontSize: 9, fill: "#94a3b8" }} />
+                <YAxis tick={{ fontSize: 9, fill: "#94a3b8" }} />
+                <Tooltip contentStyle={{ backgroundColor: "#0f172a", border: "1px solid #334155" }} />
                 <Legend />
-                <Line type="monotone" dataKey={yAxis} stroke="#4f46e5" strokeWidth={3} dot={{ r: 4 }} />
+                <Line type="monotone" dataKey={yAxis} stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>
             )}
 
             {selectedChartType === "area" && (
               <AreaChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                <XAxis dataKey={xAxis} tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey={xAxis} tick={{ fontSize: 9, fill: "#94a3b8" }} />
+                <YAxis tick={{ fontSize: 9, fill: "#94a3b8" }} />
+                <Tooltip contentStyle={{ backgroundColor: "#0f172a", border: "1px solid #334155" }} />
                 <Legend />
-                <Area type="monotone" dataKey={yAxis} stroke="#4f46e5" fill="#e0e7ff" />
+                <Area type="monotone" dataKey={yAxis} stroke="#3b82f6" fill="#1e3a8a" fillOpacity={0.4} />
               </AreaChart>
             )}
 
             {selectedChartType === "pie" && (
               <PieChart>
-                <Tooltip />
+                <Tooltip contentStyle={{ backgroundColor: "#0f172a", border: "1px solid #334155" }} />
                 <Legend />
                 <Pie
                   data={data}
                   dataKey={yAxis}
                   nameKey={xAxis}
-                  outerRadius={100}
-                  fill="#4f46e5"
+                  outerRadius={80}
+                  fill="#3b82f6"
                 >
                   {data.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -271,19 +271,30 @@ const ExcelChartBot = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 flex justify-center text-slate-700">
-      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="h-full w-full overflow-y-auto flex flex-col justify-start p-6 text-slate-700 bg-gray-100 dark:bg-gray-900 scroll-hidden">
+      {/* Page Header */}
+      <div className="max-w-7xl mx-auto w-full mb-6">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+          <BarChart3 className="w-6 h-6 text-blue-500" />
+          Conversational Data Analyst
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-xs">
+          Upload spreadsheets (CSV/XLSX) and ask visual analysis queries in natural language.
+        </p>
+      </div>
+
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6 items-start pb-8">
         
         {/* Left/Middle Column: File Details & Live Chart */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
+        <div className="lg:col-span-2 flex flex-col gap-6 w-full">
           
           {/* Top Panel: File Upload & Metadata */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-700">
             <div className="flex items-center gap-3">
-              <BarChart3 className="w-8 h-8 text-indigo-600" />
+              <Table className="w-6 h-6 text-blue-500" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Conversational Data Analyst</h1>
-                <p className="text-xs text-gray-500">Upload CSV or XLSX sheets and ask questions in plain English.</p>
+                <h2 className="text-sm font-bold text-gray-800">Spreadsheet Loader</h2>
+                <p className="text-[11px] text-gray-500">Selected sheet context stays stored in your local memory.</p>
               </div>
             </div>
 
@@ -294,7 +305,7 @@ const ExcelChartBot = () => {
                 onChange={handleFileChange}
                 className="hidden"
               />
-              <div className="px-4 py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/30 hover:border-indigo-500 text-sm font-semibold text-gray-600 dark:text-gray-400 text-center">
+              <div className="px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:border-blue-500 text-xs font-semibold text-gray-600 text-center">
                 {file ? `📎 ${file.name}` : "Upload Spreadsheet"}
               </div>
             </label>
@@ -306,37 +317,37 @@ const ExcelChartBot = () => {
               {renderActiveChart()}
             </div>
           ) : (
-            <div className="flex-1 min-h-[400px] bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl flex flex-col items-center justify-center text-center p-8">
-              <BarChart3 className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">No active analysis</h3>
-              <p className="text-sm text-gray-400 max-w-sm">
-                Upload your spreadsheet on the top right, then type a question in the chat panel to build interactive data visualizations.
+            <div className="flex-1 min-h-[400px] bg-slate-900 rounded-xl border border-slate-700 shadow flex flex-col items-center justify-center text-center p-8 text-slate-100">
+              <BarChart3 className="w-12 h-12 text-slate-655 mb-3" />
+              <h3 className="text-sm font-bold text-white mb-1">No active visualization</h3>
+              <p className="text-xs text-slate-400 max-w-sm">
+                Upload your spreadsheet above, then submit queries inside the Analyst Assistant panel to generate interactive charts.
               </p>
             </div>
           )}
 
           {/* Dataset Preview */}
           {rawData.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl flex flex-col gap-3">
-              <h4 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Table size={16} className="text-indigo-600" /> Data Sheet Preview (Top 10 rows)
+            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-3 text-slate-700">
+              <h4 className="text-xs font-bold text-gray-800 flex items-center gap-2">
+                <Table size={14} className="text-blue-500" /> Data Sheet Preview (Top 10 rows)
               </h4>
-              <div className="overflow-auto max-h-[220px] rounded-xl border dark:border-gray-700">
-                <table className="min-w-full text-xs text-left">
-                  <thead className="bg-gray-50 dark:bg-gray-900/50 text-gray-600 dark:text-gray-400">
+              <div className="overflow-auto max-h-[220px] rounded-lg border border-gray-200">
+                <table className="min-w-full text-[10px] text-left">
+                  <thead className="bg-gray-50 text-gray-600">
                     <tr>
                       {columns.map((col) => (
-                        <th key={col} className="p-2.5 border-b dark:border-gray-700 font-bold uppercase tracking-wider">
+                        <th key={col} className="p-2 border-b border-gray-200 font-bold uppercase tracking-wider">
                           {col}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="bg-transparent divide-y divide-gray-100 dark:divide-gray-700 text-gray-800 dark:text-gray-300">
+                  <tbody className="bg-transparent divide-y divide-gray-150 text-gray-800">
                     {rawData.slice(0, 10).map((row, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-900/10">
+                      <tr key={idx} className="hover:bg-gray-50/50">
                         {columns.map((col) => (
-                          <td key={col} className="p-2 border-b dark:border-gray-700 truncate max-w-[150px]">
+                          <td key={col} className="p-2 border-b border-gray-200 truncate max-w-[150px]">
                             {row[col]?.toString() || ""}
                           </td>
                         ))}
@@ -350,22 +361,22 @@ const ExcelChartBot = () => {
         </div>
 
         {/* Right Column: Conversational Chat Panel */}
-        <div className="lg:col-span-1 bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl flex flex-col h-[700px] overflow-hidden">
+        <div className="lg:col-span-1 bg-slate-900 border border-slate-700 rounded-xl shadow flex flex-col h-[600px] overflow-hidden text-slate-100">
           {/* Chat Header */}
-          <div className="p-4 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-900/20 flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-indigo-600" />
-            <span className="font-bold text-gray-900 dark:text-white">Analyst Assistant</span>
+          <div className="p-4 border-b border-slate-800 bg-slate-950/40 flex items-center gap-2">
+            <MessageSquare className="w-4 h-4 text-blue-400" />
+            <span className="font-bold text-sm text-white">Analyst Assistant</span>
           </div>
 
           {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 scrollbar-hide">
             {chats.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-center text-xs text-gray-400 p-4">
-                Ask questions like:
-                <br />
-                "Show total sales by category"
-                <br />
-                "What is the average rating per item?"
+              <div className="h-full flex flex-col items-center justify-center text-center text-[10px] text-slate-400 gap-1.5 p-4">
+                <MessageSquare className="w-8 h-8 text-slate-650" />
+                <p>Submit analytical questions like:</p>
+                <p className="italic bg-slate-950/40 p-2 rounded border border-slate-800 font-mono w-full">
+                  "Show total sales by category as a bar chart"
+                </p>
               </div>
             ) : (
               chats.map((msg, idx) => (
@@ -375,14 +386,14 @@ const ExcelChartBot = () => {
                     msg.sender === "user" ? "self-end items-end" : "self-start items-start"
                   }`}
                 >
-                  <span className="text-[10px] text-gray-400 uppercase tracking-wider">
+                  <span className="text-[9px] text-slate-500 uppercase font-semibold">
                     {msg.sender === "user" ? "You" : "Analyst"}
                   </span>
                   <div
-                    className={`px-3.5 py-2.5 rounded-2xl text-sm ${
+                    className={`px-3 py-2 rounded-xl text-xs ${
                       msg.sender === "user"
-                        ? "bg-indigo-600 text-white rounded-tr-none"
-                        : "bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-300 rounded-tl-none"
+                        ? "bg-blue-650 text-white rounded-tr-none"
+                        : "bg-slate-800 border border-slate-750 text-slate-200 rounded-tl-none"
                     }`}
                   >
                     {msg.text}
@@ -390,7 +401,7 @@ const ExcelChartBot = () => {
                   
                   {/* Quick-switch chart options for bot responses */}
                   {msg.config && (
-                    <div className="flex gap-1.5 mt-1 flex-wrap">
+                    <div className="flex gap-1 mt-1 flex-wrap">
                       {["bar", "line", "area", "pie"].map((type) => (
                         <button
                           key={type}
@@ -398,10 +409,10 @@ const ExcelChartBot = () => {
                             setCurrentChartConfig(msg.config);
                             setSelectedChartType(type);
                           }}
-                          className={`px-2 py-0.5 rounded text-[10px] border dark:border-gray-700 capitalize ${
+                          className={`px-2 py-0.5 rounded text-[9px] border border-slate-800 capitalize cursor-pointer transition ${
                             selectedChartType === type
-                              ? "bg-indigo-600 text-white"
-                              : "bg-transparent text-gray-400"
+                              ? "bg-blue-600 text-white border-blue-500"
+                              : "bg-transparent text-slate-400 hover:text-slate-200"
                           }`}
                         >
                           {type}
@@ -415,21 +426,21 @@ const ExcelChartBot = () => {
           </div>
 
           {/* Chat Inputs */}
-          <form onSubmit={handleSendMessage} className="p-4 border-t dark:border-gray-700 flex gap-2">
+          <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-800 flex gap-2">
             <input
               type="text"
               disabled={loading}
-              placeholder="Ask a question..."
+              placeholder={rawData.length === 0 ? "Upload sheet first..." : "Ask a question..."}
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              className="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 text-gray-900 dark:text-white disabled:opacity-50"
+              className="flex-1 px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-xs focus:outline-none focus:border-blue-500 text-white disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={loading}
-              className="p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow cursor-pointer transition-colors disabled:opacity-50"
+              className="p-2.5 bg-blue-650 hover:bg-blue-600 text-white rounded-lg shadow cursor-pointer transition disabled:opacity-50"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send size={18} />}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send size={14} />}
             </button>
           </form>
         </div>

@@ -8,6 +8,7 @@ import fs from "fs";
 import pdf from 'pdf-parse/lib/pdf-parse.js'
 import xlsx from "xlsx";
 import fetch from "node-fetch";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -71,6 +72,20 @@ const generateAI = async (prompt, maxTokens = 1000) => {
       return generateAI(prompt, maxTokens);
     }
 
+    throw error;
+  }
+};
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+const generateGemini = async (prompt) => {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text() || "";
+  } catch (error) {
+    console.error("Gemini Error:", error.message);
     throw error;
   }
 };
@@ -883,7 +898,7 @@ Required format:
 Do NOT include any explanations, markdown, or text before/after the JSON.
 `;
 
-    const rawContent = await generateAI(enhancedPrompt, 800);
+    const rawContent = await generateGemini(enhancedPrompt);
     const cleaned = rawContent
       .replace(/```json/g, "")
       .replace(/```/g, "")
@@ -991,7 +1006,7 @@ Required format:
 }
 `;
 
-    const rawContent = await generateAI(enhancedPrompt, 1500);
+    const rawContent = await generateGemini(enhancedPrompt);
     const cleaned = rawContent
       .replace(/```json/g, "")
       .replace(/```/g, "")

@@ -179,26 +179,26 @@ const ContentCalendar = () => {
     switch (channel) {
       case 'linkedin':
         return {
-          bg: 'bg-blue-950/40 hover:bg-blue-900/40 border-blue-500/30 text-blue-300',
-          badge: 'bg-blue-600 text-white',
+          bg: 'bg-blue-50 border-blue-200 hover:bg-blue-100 text-blue-850 dark:bg-blue-950/30 dark:border-blue-500/20 dark:text-blue-300 font-semibold shadow-xs',
+          badge: 'bg-blue-650 text-white',
           Icon: Linkedin
         }
       case 'twitter':
         return {
-          bg: 'bg-gray-800/60 hover:bg-gray-700/60 border-gray-600/30 text-gray-200',
-          badge: 'bg-white text-black',
+          bg: 'bg-gray-50 border-gray-300 hover:bg-gray-150 text-gray-800 dark:bg-gray-850/60 dark:hover:bg-gray-750/60 dark:border-gray-700/30 dark:text-gray-200 font-semibold shadow-xs',
+          badge: 'bg-black text-white dark:bg-white dark:text-black',
           Icon: Twitter
         }
       case 'instagram':
         return {
-          bg: 'bg-pink-950/40 hover:bg-pink-900/40 border-pink-500/30 text-pink-300',
+          bg: 'bg-pink-50 border-pink-200 hover:bg-pink-100 text-pink-900 dark:bg-pink-950/30 dark:border-pink-500/20 dark:text-pink-300 font-semibold shadow-xs',
           badge: 'bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-500 text-white',
           Icon: Instagram
         }
       default:
         return {
-          bg: 'bg-slate-900/40 hover:bg-slate-800/40 border-slate-700/30 text-slate-300',
-          badge: 'bg-slate-600 text-white',
+          bg: 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800 dark:bg-slate-900/40 dark:border-slate-700/30 dark:text-slate-350 font-semibold',
+          badge: 'bg-slate-650 text-white',
           Icon: Calendar
         }
     }
@@ -227,57 +227,57 @@ const ContentCalendar = () => {
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
   return (
-    <div className="min-h-screen bg-gray-900 text-slate-100 p-6 overflow-y-auto">
+    <div className="h-full w-full overflow-y-auto flex flex-col justify-start p-6 text-slate-700 bg-gray-100 dark:bg-gray-900 scroll-hidden">
       {/* Header */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
-            <Calendar className="w-8 h-8 text-indigo-400" />
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+            <Calendar className="w-6 h-6 text-indigo-500" />
             Content Campaign Calendar
           </h1>
-          <p className="text-slate-400 mt-1 text-sm">
-            Drag-and-drop to reschedule, manage multi-channel AI social campaigns, and structure your scheduling calendar.
+          <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-xs">
+            Drag-and-drop to reschedule multi-platform social media distribution posts.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-slate-800/80 border border-slate-700/80 p-1 rounded-xl items-center shadow-lg">
+          <div className="flex bg-white dark:bg-slate-800 border border-gray-250 dark:border-slate-700 p-1 rounded-lg items-center shadow-xs">
             <button 
               onClick={prevMonth}
-              className="p-2 hover:bg-slate-700/60 rounded-lg text-slate-300 transition-colors"
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-gray-500 dark:text-slate-300 transition-colors cursor-pointer"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="px-4 font-bold text-sm min-w-[140px] text-center text-slate-200">
+            <span className="px-3 font-bold text-xs min-w-[120px] text-center text-gray-700 dark:text-slate-200">
               {monthNames[month]} {year}
             </span>
             <button 
               onClick={nextMonth}
-              className="p-2 hover:bg-slate-700/60 rounded-lg text-slate-300 transition-colors"
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-gray-500 dark:text-slate-300 transition-colors cursor-pointer"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
           <button 
             onClick={() => openAddModal()}
-            className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white font-bold py-2.5 px-4 rounded-xl shadow-md shadow-indigo-500/20 transition-all cursor-pointer text-sm"
+            className="flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-blue-450 text-white font-bold py-2 px-4 rounded-lg shadow-xs hover:opacity-95 transition cursor-pointer text-xs"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Schedule Post</span>
           </button>
         </div>
       </div>
 
       {/* Main Calendar Grid */}
-      <div className="max-w-7xl mx-auto bg-slate-900/60 backdrop-blur-md rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+      <div className="max-w-7xl mx-auto w-full bg-white dark:bg-slate-900 rounded-xl border border-gray-250 dark:border-slate-800 overflow-hidden shadow-sm mb-8">
         {/* Weekday Titles */}
-        <div className="grid grid-cols-7 border-b border-slate-800 bg-slate-900/80">
+        <div className="grid grid-cols-7 border-b border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/80">
           {weekdays.map((w, idx) => (
             <div 
               key={w} 
-              className={`p-3 text-center text-xs font-bold tracking-wider uppercase ${
-                idx === 0 || idx === 6 ? 'text-slate-500' : 'text-slate-400'
+              className={`p-2.5 text-center text-[10px] font-bold tracking-wider uppercase ${
+                idx === 0 || idx === 6 ? 'text-gray-400' : 'text-gray-500'
               }`}
             >
               {w}
@@ -286,13 +286,13 @@ const ContentCalendar = () => {
         </div>
 
         {/* Cells Grid */}
-        <div className="grid grid-cols-7 grid-flow-row auto-rows-[140px] bg-slate-950/20">
+        <div className="grid grid-cols-7 grid-flow-row auto-rows-[120px] bg-white dark:bg-slate-950/20">
           {gridCells.map((cell) => {
             if (cell.type === 'empty') {
               return (
                 <div 
                   key={cell.id} 
-                  className="bg-slate-950/40 border-r border-b border-slate-900/60 opacity-30"
+                  className="bg-gray-50/40 dark:bg-slate-950/40 border-r border-b border-gray-100 dark:border-slate-900/60 opacity-30"
                 />
               )
             }
@@ -307,16 +307,16 @@ const ContentCalendar = () => {
                 key={cell.dateStr}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => handleDrop(e, cell.dateStr)}
-                className={`group relative p-2 border-r border-b border-slate-900 hover:bg-slate-900/30 transition-all flex flex-col justify-between ${
-                  isToday ? 'bg-slate-900/20 shadow-[inset_0_0_8px_rgba(79,70,229,0.15)]' : ''
+                className={`group relative p-2 border-r border-b border-gray-150 dark:border-slate-900/80 hover:bg-gray-50/50 dark:hover:bg-slate-900/20 transition-all flex flex-col justify-between ${
+                  isToday ? 'bg-blue-50/25 dark:bg-slate-900/10 shadow-[inset_0_0_6px_rgba(59,130,246,0.08)]' : ''
                 }`}
               >
                 {/* Cell Day Header */}
                 <div className="flex items-center justify-between mb-1">
-                  <span className={`text-xs font-extrabold ${
+                  <span className={`text-[10px] font-extrabold ${
                     isToday 
-                      ? 'w-6 h-6 flex items-center justify-center bg-indigo-500 text-white rounded-full' 
-                      : 'text-slate-400'
+                      ? 'w-5 h-5 flex items-center justify-center bg-blue-600 text-white rounded-full' 
+                      : 'text-gray-455 dark:text-slate-400'
                   }`}>
                     {cell.dayNum}
                   </span>
@@ -324,14 +324,14 @@ const ContentCalendar = () => {
                   {/* Hover Quick Schedule Button */}
                   <button 
                     onClick={() => openAddModal(cell.dateStr)}
-                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-slate-200 transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-gray-200 dark:hover:bg-slate-800 rounded text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300 transition-all cursor-pointer"
                   >
-                    <Plus className="w-3.5 h-3.5" />
+                    <Plus className="w-3 h-3" />
                   </button>
                 </div>
 
                 {/* Scheduled Posts Area */}
-                <div className="flex-1 overflow-y-auto space-y-1.5 scrollbar-hide">
+                <div className="flex-1 overflow-y-auto space-y-1 scrollbar-hide pr-0.5">
                   {cell.dayPosts.map((post) => {
                     const style = getChannelStyle(post.channel)
                     const ChannelIcon = style.Icon
@@ -341,12 +341,12 @@ const ContentCalendar = () => {
                         draggable
                         onDragStart={(e) => handleDragStart(e, post.id)}
                         onClick={() => openEditModal(post)}
-                        className={`p-1.5 rounded-lg border text-left cursor-grab active:cursor-grabbing transition-all select-none flex items-center gap-1.5 ${style.bg}`}
+                        className={`p-1.5 rounded border text-left cursor-grab active:cursor-grabbing transition-all select-none flex items-center gap-1.5 text-[10px] ${style.bg}`}
                       >
-                        <div className={`p-0.5 rounded-md ${style.badge} flex-shrink-0`}>
-                          <ChannelIcon className="w-3 h-3" />
+                        <div className={`p-0.5 rounded ${style.badge} flex-shrink-0`}>
+                          <ChannelIcon className="w-2.5 h-2.5" />
                         </div>
-                        <span className="text-[11px] truncate font-medium flex-1">
+                        <span className="truncate font-semibold flex-1">
                           {post.time} - {post.content}
                         </span>
                       </div>
