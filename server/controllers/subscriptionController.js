@@ -12,6 +12,12 @@ export const subscribeUser = async (req, res) => {
       });
 
     const sql = getSql();
+    if (!sql) {
+      return res.status(503).json({
+        success: false,
+        error: "Database not available",
+      });
+    }
 
     await sql`
       INSERT INTO subscribers (email)

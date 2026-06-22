@@ -3,12 +3,7 @@ import path from "path";
 import fs from "fs";
 import os from "os";
 
-const tempDir = path.join(process.cwd(), 'tmp');
-
-// Ensure tmp folder exists
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir);
-}
+// Use system temporary directory or memory for uploads on read-only filesystems
 
 const storage = multer.diskStorage({});
 
