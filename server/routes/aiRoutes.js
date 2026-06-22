@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import axios from "axios";
 import { auth } from "../middleware/auth.js";
-import { generateArticle, generateBlogTitle, generateImage, removeImageBackground, removeImageObject, resumeReview,generateWebsite, generateExcelChart } from "../controllers/aiController.js";
+import { generateArticle, generateBlogTitle, generateImage, removeImageBackground, removeImageObject, resumeReview, tailorResume, generateWebsite, modifyWebsite, generateExcelChart, generateCampaign } from "../controllers/aiController.js";
 import { resumeUpload, default as upload } from "../configs/multer.js";
 
 const aiRouter = express.Router();
@@ -38,8 +38,11 @@ aiRouter.post('/remove-image-background', upload.single('image'), auth, removeIm
 aiRouter.post('/remove-image-object', upload.single('image'), auth, removeImageObject)
 
 aiRouter.post('/resume-review', resumeUpload.single('resume'), auth, resumeReview)
+aiRouter.post('/tailor-resume', auth, tailorResume);
 aiRouter.post('/generate-website',auth, generateWebsite);
+aiRouter.post('/modify-website', auth, modifyWebsite);
 aiRouter.post("/generate-excel-chart", upload.single("file"), auth, generateExcelChart);
+aiRouter.post("/generate-campaign", auth, generateCampaign);
 
 
 

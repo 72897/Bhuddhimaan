@@ -11,7 +11,9 @@ import {
   HiDocumentText,
   HiUserGroup,
   HiChartPie,
-  HiCode
+  HiCode,
+  HiShieldCheck,
+  HiCalendar
 } from 'react-icons/hi';
 import { CiEraser, CiLogout } from 'react-icons/ci';
 import profileImg from '../assets/profile_img_1.png';
@@ -19,6 +21,7 @@ import profileImg from '../assets/profile_img_1.png';
 const navItems = [
   { to: '/ai', label: 'Dashboard', Icon: HiHome },
   { to: '/ai/write-article', label: 'Write Article', Icon: HiPencil },
+  { to: '/ai/content-calendar', label: 'Content Calendar', Icon: HiCalendar },
   { to: '/ai/blog-titles', label: 'Blog Titles', Icon: HiHashtag },
   { to: '/ai/generate-images', label: 'Generate Images', Icon: HiPhotograph },
   { to: '/ai/remove-background', label: 'Remove Background', Icon: CiEraser },
@@ -26,8 +29,8 @@ const navItems = [
   { to: '/ai/review-resume', label: 'Review Resume', Icon: HiDocumentText },
   { to: '/ai/generate-excel-chart', label: 'Excel Chart Generator', Icon: HiChartPie },
   { to: '/ai/generate-website', label: 'Website Generator', Icon: HiCode },
+  { to: '/ai/brand-hub', label: 'Brand Hub', Icon: HiShieldCheck },
   { to: '/ai/community', label: 'Community', Icon: HiUserGroup },
-
 ]
 
 const Sidebar = ({ sidebar, setSidebar }) => {

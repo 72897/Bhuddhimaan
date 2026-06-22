@@ -17,6 +17,7 @@ console.log("  - APILAYER_KEY exists:", !!process.env.APILAYER_KEY);
 import aiRouter from './routes/aiRoutes.js';
 import Cloudinary from './configs/cloudinary.js';
 import userRouter from './routes/userRoutes.js';
+import brandRouter from './routes/brandRoutes.js';
 
 const app = express();
 
@@ -44,6 +45,7 @@ if (hasValidClerkKeys) {
 
 app.use('/api/ai', aiRouter);
 app.use('/api/user', userRouter);
+app.use('/api/brand', brandRouter);
 app.use("/api", subscriptionRoutes);
 
 app.get('/', (req, res) => {

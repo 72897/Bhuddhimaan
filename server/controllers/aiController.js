@@ -199,6 +199,29 @@ export const generateWebsite = async (req, res) => {
       });
     }
 
+    const sql = getSql();
+    let brandContext = "";
+    if (sql && userId) {
+      try {
+        const brandProfile = await sql`SELECT * FROM brand_profiles WHERE user_id = ${userId}`;
+        if (brandProfile.length > 0) {
+          const bp = brandProfile[0];
+          brandContext = `
+STRICT BRANDING GUIDELINES:
+- Brand Name: "${bp.brand_name}"
+- Tone of Voice: "${bp.tone_of_voice}"
+- Target Audience: "${bp.target_audience}"
+- Primary Theme Color: "${bp.primary_color}"
+- Secondary Theme Color: "${bp.secondary_color}"
+- Brand Description: "${bp.brand_description}"
+Please style the website using these colors (use Tailwind matching colors where appropriate, e.g. bg-[${bp.primary_color}], text-[${bp.primary_color}], border-[${bp.primary_color}], primary/secondary highlights) and align design elements to fit this brand.
+`;
+        }
+      } catch (dbError) {
+        console.log("Failed to fetch brand profile for website generation, continuing:", dbError.message);
+      }
+    }
+
     const enhancedPrompt = `
 Generate a complete responsive website.
 
@@ -212,6 +235,7 @@ STRICT RULES:
 <script src="https://cdn.tailwindcss.com"></script>
 - No comments or explanations
 - Must be valid HTML
+${brandContext}
 
 Description:
 ${prompt}
@@ -242,8 +266,6 @@ ${prompt}
       });
     }
 
-    const sql = getSql();
-
     if (sql && userId) {
       await sql`
         INSERT INTO creations (user_id, prompt, content, type)
@@ -262,6 +284,73 @@ ${prompt}
       success: false,
       error: error.message,
     });
+  }
+};
+
+// Modify website code based on element selector and user instruction
+export const modifyWebsite = async (req, res) => {
+  try {
+    const { userId } = req.auth || {};
+    const { code, element, instruction } = req.body || {};
+    const plan = req.plan;
+    const freeUsage = req.free_usage ?? 0;
+
+    if (!code || !instruction) {
+      return res.status(400).json({ success: false, error: "Code and Instruction required" });
+    }
+
+    if (plan !== "premium" && freeUsage >= 10) {
+      return res.status(403).json({ success: false, error: "Free limit reached" });
+    }
+
+    const sql = getSql();
+    let brandContext = "";
+    if (sql && userId) {
+      try {
+        const brandProfile = await sql`SELECT * FROM brand_profiles WHERE user_id = ${userId}`;
+        if (brandProfile.length > 0) {
+          const bp = brandProfile[0];
+          brandContext = `Style guidelines: Primary color: ${bp.primary_color}, Secondary color: ${bp.secondary_color}. Brand Name: ${bp.brand_name}.`;
+        }
+      } catch (e) {
+        console.log("DB profile skip:", e.message);
+      }
+    }
+
+    const enhancedPrompt = `
+You are an expert web developer editing a website's code.
+
+Current Website HTML Code:
+\`\`\`html
+${code}
+\`\`\`
+
+Target Element Details (if selected):
+${element ? JSON.stringify(element) : "No specific element selected. Modify globally."}
+
+User Instruction:
+"${instruction}"
+
+STRICT RULES:
+- Output ONLY the fully updated, complete website HTML code.
+- No explanations or comments.
+- No markdown wrappers or backticks.
+- Preserve the exact layout, structure, stylesheets, and CDN imports except for the requested modifications.
+- Ensure the output is valid, complete HTML starting with <!DOCTYPE html> and ending with </html>.
+${brandContext}
+`;
+
+    const rawContent = await generateAI(enhancedPrompt, 3000);
+    
+    // clean markdown blocks if the AI outputs backticks
+    let content = rawContent.trim();
+    const match = content.match(/```(?:html)?([\s\S]*?)```/i);
+    if (match) content = match[1].trim();
+
+    res.json({ success: true, content });
+  } catch (error) {
+    console.error("Modify Website Error:", error);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
@@ -549,6 +638,7 @@ async function updateUsage(userId, plan, freeUsage) {
 export const resumeReview = async (req, res) => {
   try {
     const resume = req.file;
+    const { jd = "" } = req.body;
 
     // Check for file existence
     if (!resume) {
@@ -567,12 +657,11 @@ export const resumeReview = async (req, res) => {
     }
 
     // Log file details for debugging
-    console.log("🔍 ResumeReview Debug:");
-    console.log("  - File details:", {
+    console.log("🔍 ResumeReview Debug:", {
       filename: resume.filename,
       size: resume.size,
       mimetype: resume.mimetype,
-      path: resume.path
+      hasJd: !!jd
     });
 
     // Read and parse PDF file
@@ -590,76 +679,50 @@ export const resumeReview = async (req, res) => {
       });
     }
 
-    // Prepare prompt for AI processing
-    const prompt = `
-Review this resume and provide:
-
-1. Overall Impression
-2. Strengths
-3. Weaknesses
-4. Recommendations
+    const enhancedPrompt = `
+You are an expert ATS (Applicant Tracking System) reviewer and hiring manager.
+Analyze the following resume text.
+${jd.trim() ? `Target Job Description:\n"""\n${jd}\n"""` : "Provide a general resume review."}
 
 Resume Content:
+"""
 ${text}
+"""
+
+Return ONLY a valid JSON object matching this structure:
+{
+  "atsScore": 85, 
+  "matchAnalysis": "A short summary of how well the resume matches the job description...",
+  "strengths": ["Strength 1", "Strength 2", "Strength 3"],
+  "weaknesses": ["Weakness 1", "Weakness 2"],
+  "missingKeywords": ["Keyword 1", "Keyword 2"],
+  "recommendations": ["Recommendation 1", "Recommendation 2"]
+}
+
+Do NOT include any markdown, backticks, or text before/after the JSON.
 `;
 
-    // Try API Layer first if available
-    let content = "";
-    if (process.env.APILAYER_KEY) {
-      try {
-        console.log("  - Calling API Layer for resume review...");
-        const apiLayerResponse = await axios.post(
-          "https://api.apilayer.com/resume/review",
-          { text },
-          {
-            headers: {
-              apikey: process.env.APILAYER_KEY,
-              "Content-Type": "application/json",
-            },
-            timeout: 30000,
-          }
-        );
+    const rawContent = await generateAI(enhancedPrompt, 1500);
+    
+    // Clean possible markdown wrappers
+    const cleaned = rawContent
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
 
-        content = apiLayerResponse.data?.review || apiLayerResponse.data?.feedback || JSON.stringify(apiLayerResponse.data);
-        console.log("  - API Layer response received, content length:", content.length);
-      } catch (apiLayerError) {
-        console.log("  - API Layer failed, using fallback analysis:", apiLayerError.message);
-      }
-    }
-
-    // Fallback basic analysis if no API Layer response
-    if (!content) {
-      console.log("  - Using fallback analysis");
-
-      content = `## Resume Analysis for ${resume.filename}
-
-### Overall Impression
-Based on the uploaded resume, here's a comprehensive analysis of your document.
-
-### Strengths
-- **Clear Structure**: Your resume follows a logical format.
-- **Professional Presentation**: The layout appears well-organized.
-- **Relevant Content**: The document contains appropriate sections for a professional resume.
-
-### Weaknesses
-- **Content Analysis**: Unable to provide specific feedback without AI processing.
-- **Keyword Optimization**: Consider tailoring keywords for specific job roles.
-- **Achievement Quantification**: Ensure measurable achievements are highlighted.
-
-### Recommendations
-1. **Customize for Each Role**: Tailor your resume for specific job applications.
-2. **Use Action Verbs**: Start bullet points with strong action verbs.
-3. **Quantify Achievements**: Include specific numbers and metrics where possible.
-4. **Proofread Thoroughly**: Ensure no spelling or grammatical errors.
-5. **Keep it Concise**: Aim for 1-2 pages maximum.
-
-### Next Steps
-- Consider using professional resume review services.
-- Have multiple people review your resume.
-- Update regularly with new experiences and skills.
-
-*Note: This is a basic analysis. For more detailed feedback, ensure your AI API keys are properly configured.*
-`;
+    let analysis;
+    try {
+      analysis = JSON.parse(cleaned);
+    } catch (err) {
+      console.warn("AI didn't return valid JSON, parsing fallback:", err.message);
+      analysis = {
+        atsScore: jd.trim() ? 50 : 70,
+        matchAnalysis: "Failed to parse detailed AI JSON response. Below is the raw assessment.",
+        strengths: ["Structure is readable"],
+        weaknesses: ["AI review formatting error"],
+        missingKeywords: ["N/A"],
+        recommendations: [cleaned]
+      };
     }
 
     // Save review content to database
@@ -668,7 +731,7 @@ Based on the uploaded resume, here's a comprehensive analysis of your document.
       try {
         await sql`
           INSERT INTO creations (user_id, prompt, content, type)
-          VALUES (${req.auth?.userId}, 'Review the uploaded resume', ${content}, 'resume-review')
+          VALUES (${req.auth?.userId}, 'Review the uploaded resume', ${JSON.stringify(analysis)}, 'resume-review')
         `;
         console.log("  - Database record created successfully");
       } catch (dbError) {
@@ -676,8 +739,7 @@ Based on the uploaded resume, here's a comprehensive analysis of your document.
       }
     }
 
-    console.log("  - Resume review completed successfully");
-    res.json({ success: true, content });
+    res.json({ success: true, content: analysis, resumeText: text });
   } catch (error) {
     console.error("❌ ResumeReview Error:", error.message);
     res.status(500).json({
@@ -687,116 +749,175 @@ Based on the uploaded resume, here's a comprehensive analysis of your document.
   }
 };
 
+export const tailorResume = async (req, res) => {
+  try {
+    const { userId } = req.auth || {};
+    const { text, jd } = req.body || {};
+    const plan = req.plan;
+    const freeUsage = req.free_usage ?? 0;
+
+    if (!text || !jd) {
+      return res.status(400).json({ success: false, error: "Resume text and Job Description required" });
+    }
+
+    if (plan !== "premium" && freeUsage >= 10) {
+      return res.status(403).json({ success: false, error: "Free limit reached" });
+    }
+
+    const enhancedPrompt = `
+You are a professional resume writer. Rewrite the following resume content to align with the provided Job Description.
+
+Target Job Description:
+"""
+${jd}
+"""
+
+Original Resume Content:
+"""
+${text}
+"""
+
+STRICT RULES:
+- Rewrite the Summary and Professional Experience achievements to naturally incorporate missing keywords and highlight matching skills from the job description.
+- Use strong action verbs and quantify achievements where possible (e.g. percentages, dollar values, time saved).
+- Preserve the name, contact info, education, and dates exactly as they are.
+- Output the rewritten resume in clean, professional Markdown.
+- Do NOT include any commentary, intros, or markdown blocks (no backticks). Start directly with the resume text.
+`;
+
+    const content = await generateAI(enhancedPrompt, 2000);
+    
+    // Save to creations
+    const sql = getSql();
+    if (sql && userId) {
+      await sql`
+        INSERT INTO creations (user_id, prompt, content, type)
+        VALUES (${userId}, 'Tailor resume for JD', ${content}, 'tailored-resume')
+      `;
+    }
+
+    if (hasClerkKeys && plan !== "premium" && userId) {
+      await updateUsage(userId, plan, freeUsage);
+    }
+
+    res.json({ success: true, content });
+  } catch (error) {
+    console.error("Tailor Resume Error:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 
 export const generateExcelChart = async (req, res) => {
   try {
     const { userId } = req.auth || {};
-    const { question } = req.body || {};
+    const { question, columns: bodyColumns, sample: bodySample, data: bodyData } = req.body || {};
     const plan = req.plan;
     const freeUsage = req.free_usage ?? 0;
 
-    if (!req.file)
-      return res.status(400).json({
-        success: false,
-        error: "Excel file required",
-      });
+    let columns = [];
+    let sample = [];
+    let data = [];
 
-    if (!question)
-      return res.status(400).json({
-        success: false,
-        error: "Question required",
-      });
+    if (req.file) {
+      // Parse Excel upload
+      const workbook = xlsx.readFile(req.file.path);
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      data = xlsx.utils.sheet_to_json(sheet);
+      
+      // Clean up temp file
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (err) {
+        console.log("Failed to clean up uploaded excel file:", err.message);
+      }
 
-    if (plan !== "premium" && freeUsage >= 10)
-      return res.json({
-        success: false,
-        error: "Free limit reached. Upgrade to premium.",
-      });
+      if (!data.length) {
+        return res.status(400).json({ success: false, error: "Excel file is empty" });
+      }
 
-    // Parse Excel
-    const workbook = xlsx.readFile(req.file.path);
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const data = xlsx.utils.sheet_to_json(sheet);
+      columns = Object.keys(data[0]);
+      sample = data.slice(0, 10);
+    } else if (bodyColumns && bodySample) {
+      // Conversational request
+      columns = bodyColumns;
+      sample = bodySample;
+      data = bodyData || [];
+    } else {
+      return res.status(400).json({ success: false, error: "Excel file or data context required" });
+    }
 
-    if (!data.length)
-      return res.status(400).json({
-        success: false,
-        error: "Excel file is empty",
-      });
+    if (!question) {
+      return res.status(400).json({ success: false, error: "Question required" });
+    }
 
-    const columns = Object.keys(data[0]);
-    const sample = data.slice(0, 10);
+    if (plan !== "premium" && freeUsage >= 10) {
+      return res.status(403).json({ success: false, error: "Free limit reached." });
+    }
 
     // Strong JSON-only prompt
     const enhancedPrompt = `
 You are a professional data analyst.
-If dataset has more than 12 categories,
-DO NOT use pie chart.
-Use bar chart instead.
 Dataset Columns:
 ${columns.join(", ")}
 
-Sample Data:
+Sample Data Structure:
 ${JSON.stringify(sample)}
 
 User Question:
 "${question}"
 
 IMPORTANT:
-Return ONLY pure JSON.
-Do NOT include explanation.
-Do NOT include markdown.
-Do NOT include text before or after JSON.
-
+Return ONLY a valid JSON block mapping this request to a chart description.
 Required format:
-
 {
   "chartType": "bar | line | pie | area",
   "xAxis": "column_name",
   "yAxis": "column_name",
   "aggregation": "sum | avg | count | none",
-  "title": "Chart title"
+  "title": "A descriptive title for the chart",
+  "insight": "A 1-sentence analytical insight about this query..."
 }
+
+Do NOT include any explanations, markdown, or text before/after the JSON.
 `;
 
     const rawContent = await generateAI(enhancedPrompt, 800);
-
-    // Clean possible markdown
     const cleaned = rawContent
       .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
     let chartConfig;
-
     try {
       chartConfig = JSON.parse(cleaned);
     } catch (err) {
-      return res.status(500).json({
-        success: false,
-        error: "AI returned invalid JSON",
-      });
+      return res.status(500).json({ success: false, error: "AI returned invalid JSON: " + cleaned });
     }
 
     // Save to DB
     const sql = getSql();
     if (sql && userId) {
-      await sql`
-        INSERT INTO creations (user_id, prompt, content, type)
-        VALUES (${userId}, ${question}, ${cleaned}, 'excel_chart')
-      `;
+      try {
+        await sql`
+          INSERT INTO creations (user_id, prompt, content, type)
+          VALUES (${userId}, ${question}, ${cleaned}, 'excel_chart')
+        `;
+      } catch (dbError) {
+        console.log("DB save failed:", dbError.message);
+      }
     }
 
     if (hasClerkKeys && plan !== "premium" && userId) {
-      await clerkClient.users.updateUser(userId, {
-        privateMetadata: { free_usage: freeUsage + 1 },
-      });
+      await updateUsage(userId, plan, freeUsage);
     }
 
     res.json({
       success: true,
       chartConfig,
+      columns,
+      sample,
       data,
     });
   } catch (error) {
@@ -807,6 +928,108 @@ Required format:
     });
   }
 };
+
+export const generateCampaign = async (req, res) => {
+  try {
+    const { userId } = req.auth || {};
+    const { articleTitle, articleContent } = req.body || {};
+    const plan = req.plan;
+    const freeUsage = req.free_usage ?? 0;
+
+    if (!articleContent) {
+      return res.status(400).json({ success: false, error: "Article content is required" });
+    }
+
+    if (plan !== "premium" && freeUsage >= 10) {
+      return res.status(403).json({ success: false, error: "Free limit reached. Upgrade to premium." });
+    }
+
+    // Retrieve Brand profile context if exists
+    let brandContext = "";
+    const sql = getSql();
+    if (sql && userId) {
+      try {
+        const brandProfile = await sql`SELECT * FROM brand_profiles WHERE user_id = ${userId}`;
+        if (brandProfile.length > 0) {
+          const bp = brandProfile[0];
+          brandContext = `
+STRICT BRANDING GUIDELINES:
+- Brand Name: "${bp.brand_name}"
+- Target Audience: "${bp.target_audience}"
+- Tone of Voice: "${bp.tone_of_voice}"
+- Brand Description: "${bp.brand_description}"
+Ensure the social media copy aligns perfectly with this brand's voice and tone.
+`;
+        }
+      } catch (dbError) {
+        console.log("Failed to fetch brand profile for campaign, continuing:", dbError.message);
+      }
+    }
+
+    const enhancedPrompt = `
+You are an expert social media marketer and content strategist.
+Given the following article, generate a highly engaging multi-channel social media campaign.
+
+Article Title: ${articleTitle || "Untitled"}
+Article Content:
+${articleContent}
+
+${brandContext}
+
+Please generate the campaign copy for the following channels:
+1. LinkedIn Post: An engaging, thought-provoking hook, a structured summary of the key takeaways (using bullet points/emojis), and 3-5 relevant hashtags.
+2. Twitter (X) Thread: A 3 to 5 tweet thread. The first tweet should be a hook to draw readers in. The subsequent tweets should expand on the key findings, and the final tweet should wrap it up with a call to action.
+3. Instagram Caption: An engaging, visual caption with a summary, relevant emojis, and hashtags.
+
+IMPORTANT:
+Return ONLY a valid JSON block containing the generated campaign. Do NOT include any explanations, introductory text, markdown formatting blocks (like \`\`\`json), or text before/after the JSON.
+Required format:
+{
+  "linkedin": "LinkedIn copy here",
+  "twitter": ["Tweet 1 copy", "Tweet 2 copy", "Tweet 3 copy", "Tweet 4 copy", "Tweet 5 copy"],
+  "instagram": "Instagram copy here"
+}
+`;
+
+    const rawContent = await generateAI(enhancedPrompt, 1500);
+    const cleaned = rawContent
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    let campaign;
+    try {
+      campaign = JSON.parse(cleaned);
+    } catch (err) {
+      return res.status(500).json({ success: false, error: "AI returned invalid JSON: " + cleaned });
+    }
+
+    // Save to DB
+    if (sql && userId) {
+      try {
+        await sql`
+          INSERT INTO creations (user_id, prompt, content, type)
+          VALUES (${userId}, ${articleTitle || 'Social campaign'}, ${cleaned}, 'campaign')
+        `;
+      } catch (dbError) {
+        console.log("DB save failed for campaign:", dbError.message);
+      }
+    }
+
+    if (hasClerkKeys && plan !== "premium" && userId) {
+      await updateUsage(userId, plan, freeUsage);
+    }
+
+    res.json({
+      success: true,
+      campaign
+    });
+  } catch (error) {
+    console.error("Generate Campaign Error:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 
 
 

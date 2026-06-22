@@ -18,6 +18,8 @@ import GenerateExcelChart from './pages/GenerateExcelChart'
 import '@fontsource/mona-sans/400.css'
 import '@fontsource/mona-sans/700.css'
 import GenerateWebsite from './pages/GenerateWebsite'
+import BrandHub from './pages/BrandHub'
+import ContentCalendar from './pages/ContentCalendar'
 
 const App = () => {
   return (
@@ -36,6 +38,8 @@ const App = () => {
           <Route path='community' element={<Community />} />
           <Route path='generate-website' element={<GenerateWebsite />} />
           <Route path='generate-excel-chart' element={<GenerateExcelChart />} />
+          <Route path='brand-hub' element={<BrandHub />} />
+          <Route path='content-calendar' element={<ContentCalendar />} />
         </Route>
       </Routes>
     </div>
